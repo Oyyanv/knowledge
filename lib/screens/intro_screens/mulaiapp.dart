@@ -6,7 +6,7 @@ class Mulaiapps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.amber,
+       color:const Color(0xff7887BB),
     );
   }
 }

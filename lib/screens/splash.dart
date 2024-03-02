@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:knowledge/screens/introduction_page.dart';
 
 class Splash extends StatefulWidget {
-  const Splash({super.key});
+  const Splash({Key? key}) : super(key: key);
 
   @override
   State<Splash> createState() => _SplashState();
@@ -12,22 +12,34 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    _navigasihome();
+    _navigateHome();
   }
 
-  _navigasihome() async {
-    await Future.delayed(const Duration(milliseconds: 1500), () {});
+  _navigateHome() async {
+    await Future.delayed(const Duration(milliseconds: 1500));
     // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Introductionpage()));
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const Introductionpage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: const Color(0xffFFF8EF),
       body: Center(
-        child: Text(
-          'Splash Screen',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Image.asset(
+          'lib/assets/images/logo_knowledge.png',
+          width: 260,
+          height: 260,
         ),
       ),
     );
