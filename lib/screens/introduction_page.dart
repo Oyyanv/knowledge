@@ -45,7 +45,7 @@ class _IntroductionpageState extends State<Introductionpage> {
           // ),
           //indicator
           Container(
-            alignment: Alignment(0, 0.90),
+            alignment: const Alignment(0, 0.90),
             child: SmoothPageIndicator(controller: _controller, count: 2),
           ),
         ],
