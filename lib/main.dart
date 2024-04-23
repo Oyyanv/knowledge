@@ -59,7 +59,30 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Image.asset(
+          'lib/assets/images/logo.png',
+          width: 150,
+          height: 150,
+        ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+          )
+        ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: <Color>[
+                Color(0xFFCCD4F0),
+                Color(0xFFA4B6E1),
+                Color(0xFF9BAAD2)
+              ])),
+        ),
+      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -88,9 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         currentIndex: _selectedIndex,
         unselectedItemColor: Colors.grey,
-        selectedItemColor: const Color.fromARGB(255, 144, 113, 236),
+        selectedItemColor: const Color.fromARGB(255, 158, 135, 228),
         onTap: _onTimeTapped,
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        elevation: 0,
+      ),
     );
   }
 }
