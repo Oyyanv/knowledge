@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_unnecessary_containers
 import 'package:flutter/material.dart';
 
 void main() {
@@ -60,10 +61,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset(
-          'lib/assets/images/logo.png',
-          width: 150,
-          height: 150,
+        title: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                'lib/assets/images/book.png',
+                width: 34,
+                height: 34,
+              ),
+              const Text(
+                ' Knowledge',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF404080),
+                ),
+              ),
+            ],
+          ),
         ),
         actions: <Widget>[
           IconButton(
