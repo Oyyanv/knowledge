@@ -84,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.search),
+            color: Colors.white,
           )
         ],
         flexibleSpace: Container(
