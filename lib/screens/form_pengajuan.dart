@@ -39,7 +39,7 @@ class _BelajarFormState extends State<BelajarForm> {
     }
   }
 
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
   final jadwal = TextEditingController();
   final platformmeeting = TextEditingController();
 
@@ -90,16 +90,18 @@ class _BelajarFormState extends State<BelajarForm> {
       //buat form
       body: Form(
         //unique key untuk identifikasi form
-        key: _formKey,
+        // key: _formKey,
         child: Container(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             //semua widget ke kiri
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(alignment: Alignment.center,
-              child: Text('Pengajuan'),),
-               const SizedBox(height: 20),
+              Container(
+                alignment: Alignment.center,
+                child: Text('Pengajuan'),
+              ),
+              const SizedBox(height: 20),
               //memberi jarak
               TextFormField(
                 //controller: name untuk memberitahu bahwa inputan field ini adalah punya variabel name
@@ -122,7 +124,7 @@ class _BelajarFormState extends State<BelajarForm> {
                 },
               ),
               const SizedBox(height: 15),
-             FormField<String>(
+              FormField<String>(
                 builder: (FormFieldState<String> state) {
                   return InputDecorator(
                     decoration: InputDecoration(
@@ -163,7 +165,17 @@ class _BelajarFormState extends State<BelajarForm> {
                 },
               ),
               const SizedBox(height: 15),
-              
+              Container(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  child: Text('Add Button'),
+                  onPressed: () {
+                    
+                  },style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.amberAccent)
+                  ),
+                ),
+              ),
             ],
           ),
         ),

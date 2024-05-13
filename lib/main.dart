@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knowledge/screens/form_pengajuan.dart';
-import 'package:knowledge/screens/splash.dart';
+// import 'package:knowledge/screens/splash.dart';
 
 
 void main() {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
        debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: BelajarForm(),
     );
   }
 }
