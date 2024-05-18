@@ -7,13 +7,16 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _bouncecontroller;
   late AnimationController _secondcontroller;
   late AnimationController _thirdcontroller;
   late AnimationController _fourthcontroller;
   late AnimationController _gambarcontroller;
   late AnimationController _fadeOutController;
+  late AnimationController _backGroundController;
   late Animation<Offset> _offsetAnimation;
   late Animation<Offset> _offsetgambar;
   late Animation<Offset> _text1;
@@ -22,12 +25,18 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   late Animation<Offset> _text4;
   late Animation<double> _bouncelogo;
   late Animation<double> _fadeOutAnimation;
+  late Animation<Decoration> _backgroundAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+
+    _backGroundController = AnimationController(
+      duration: const Duration(milliseconds: 700),
       vsync: this,
     );
 
@@ -56,12 +65,17 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       vsync: this,
     );
 
+    _bouncecontroller = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0.0, -10.0),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
-        parent: _controller,
+        parent: _bouncecontroller,
         curve: Curves.easeInOut,
       ),
     );
@@ -122,23 +136,43 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       CurvedAnimation(parent: _fadeOutController, curve: Curves.easeInOut),
     );
 
+    _backgroundAnimation = TweenSequence<Decoration>([
+      TweenSequenceItem(
+        tween: DecorationTween(
+          begin: const BoxDecoration(),
+          end: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xffDEE3F1), Color(0xffBCCFFF), Color(0xff8EB3FA)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        weight: 1.0,
+      ),
+    ]).animate(_backGroundController);
+
     _controller.forward();
     _thirdcontroller.forward();
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 1400), () {
       _secondcontroller.forward();
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 1400), () {
       _fourthcontroller.forward();
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      _backGroundController.forward();
+    });
+
+    Future.delayed(const Duration(milliseconds: 1400), () {
       _gambarcontroller.forward();
     });
 
     // Trigger the fade-out animation after all other animations are complete
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(milliseconds: 2200), () {
       _fadeOutController.forward();
     });
   }
@@ -146,75 +180,87 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: AnimatedBuilder(
-          animation: _fadeOutController,
-          builder: (context, child) {
-            return Opacity(
-              opacity: _fadeOutAnimation.value,
-              child: child,
-            );
-          },
-          child: Stack(
-            children: [
-              AnimatedBuilder(
-                animation: Listenable.merge([_controller, _gambarcontroller]),
+      body: AnimatedBuilder(
+        animation: _backGroundController,
+        builder: (context, child) {
+          return Container(
+            decoration: _backgroundAnimation.value,
+            child: Center(
+              child: AnimatedBuilder(
+                animation: _fadeOutController,
                 builder: (context, child) {
-                  return Transform.translate(
-                    offset: _offsetAnimation.value *
-                        (1 - _bouncelogo.value) *
-                        40,
-                    child: child,
-                  );
-                },
-                child: SlideTransition(
-                  position: _offsetgambar,
-                  child: Image.asset(
-                    'lib/assets/images/logonnew.png',
-                    height: 70,
-                    width: 70,
-                  ),
-                ),
-              ),
-              AnimatedBuilder(
-                animation: Listenable.merge([_controller, _secondcontroller]),
-                builder: (context, child) {
-                  return SlideTransition(
-                    position: _text1,
-                    child: SlideTransition(
-                      position: _text2,
-                      child: const Text(
-                        'Know    ',
-                        style: TextStyle(
-                            fontSize: 23,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff404080)),
-                      ),
+                  return Opacity(
+                    opacity: _fadeOutAnimation.value,
+                    child: Stack(
+                      children: [
+                        AnimatedBuilder(
+                          animation: Listenable.merge(
+                              [_controller, _gambarcontroller]),
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: _offsetAnimation.value *
+                                  (1 - _bouncelogo.value) *
+                                  40,
+                              child: child,
+                            );
+                          },
+                          child: SlideTransition(
+                            position: _offsetgambar,
+                            child: Image.asset(
+                              'lib/assets/images/logonnew.png',
+                              height: 70,
+                              width: 70,
+                            ),
+                          ),
+                        ),
+                        AnimatedBuilder(
+                          animation: Listenable.merge(
+                              [_controller, _secondcontroller]),
+                          builder: (context, child) {
+                            return SlideTransition(
+                              position: _text1,
+                              child: SlideTransition(
+                                position: _text2,
+                                child: const Text(
+                                  'Know    ',
+                                  style: TextStyle(
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff404080),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        AnimatedBuilder(
+                          animation: Listenable.merge(
+                              [_thirdcontroller, _fourthcontroller]),
+                          builder: (context, child) {
+                            return SlideTransition(
+                              position: _text3,
+                              child: SlideTransition(
+                                position: _text4,
+                                child: const Text(
+                                  ' ledge',
+                                  style: TextStyle(
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff404080),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
-              AnimatedBuilder(
-                animation: Listenable.merge([_thirdcontroller, _fourthcontroller]),
-                builder: (context, child) {
-                  return SlideTransition(
-                    position: _text3,
-                    child: SlideTransition(
-                      position: _text4,
-                      child: const Text(
-                        ' ledge',
-                        style: TextStyle(
-                            fontSize: 23,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff404080)),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -227,6 +273,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     _fourthcontroller.dispose();
     _gambarcontroller.dispose();
     _fadeOutController.dispose();
+    _backGroundController.dispose();
+    _bouncecontroller.dispose();
     super.dispose();
   }
 }
