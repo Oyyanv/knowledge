@@ -12,15 +12,18 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [
-          Color(0xff7D99E7),
-          Color(0xffBCCFFF),
-          Color(0xff8EB3FA)
-        ], begin: Alignment.topLeft, end: Alignment.bottomCenter)),
-        child: SizedBox.expand(
-          child: Row(
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [
+                Color(0xff7D99E7),
+                Color(0xffBCCFFF),
+                Color(0xff8EB3FA)
+              ], begin: Alignment.topLeft, end: Alignment.bottomCenter),
+            ),
+          ),
+          Row(
             children: [
               //button kembali
               Column(
@@ -53,48 +56,47 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-              //button kembali
-              //knowledge icon
-              Row(
+            ],
+          ),
+          //knowledge icon
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      const SizedBox(
-                        height: 125,
-                      ),
-                      Image.asset(
-                        'lib/assets/images/logonnew.png',
-                        height: 60,
-                        width: 60,
-                      ),
-                    ],
+                  const SizedBox(
+                    height: 125,
                   ),
-                  const Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        height: 135,
-                      ),
-                      Text(
-                        '  Knowledge',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff404080),
-                        ),
-                      ),
-                    ],
+                  Image.asset(
+                    'lib/assets/images/logonnew.png',
+                    height: 60,
+                    width: 60,
                   ),
                 ],
               ),
-              //knowledge icon
-              //card login
+              const Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(
+                    height: 135,
+                  ),
+                  Text(
+                    ' Knowledge',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff404080),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-        ),
+          //knowledge icon
+        ],
       ),
     );
   }
