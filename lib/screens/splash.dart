@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'intro/introduction.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -9,27 +10,36 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late AnimationController _bouncecontroller;
-  late AnimationController _secondcontroller;
-  late AnimationController _thirdcontroller;
-  late AnimationController _fourthcontroller;
-  late AnimationController _gambarcontroller;
-  late AnimationController _fadeOutController;
-  late AnimationController _backGroundController;
-  late Animation<Offset> _offsetAnimation;
-  late Animation<Offset> _offsetgambar;
-  late Animation<Offset> _text1;
-  late Animation<Offset> _text2;
-  late Animation<Offset> _text3;
-  late Animation<Offset> _text4;
-  late Animation<double> _bouncelogo;
-  late Animation<double> _fadeOutAnimation;
-  late Animation<Decoration> _backgroundAnimation;
+  late final AnimationController _controller;
+  late final AnimationController _bounceController;
+  late final AnimationController _secondController;
+  late final AnimationController _thirdController;
+  late final AnimationController _fourthController;
+  late final AnimationController _gambarController;
+  late final AnimationController _fadeOutController;
+  late final AnimationController _backGroundController;
+  late final Animation<Offset> _offsetAnimation;
+  late final Animation<Offset> _offsetGambar;
+  late final Animation<Offset> _text1;
+  late final Animation<Offset> _text2;
+  late final Animation<Offset> _text3;
+  late final Animation<Offset> _text4;
+  late final Animation<double> _bounceLogo;
+  late final Animation<double> _fadeOutAnimation;
+  late final Animation<Decoration> _backgroundAnimation;
 
   @override
   void initState() {
     super.initState();
+
+    _initializeAnimations();
+
+    _startAnimations();
+
+    _navigateHome();
+  }
+
+  void _initializeAnimations() {
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -40,22 +50,22 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    _secondcontroller = AnimationController(
+    _secondController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
     );
 
-    _gambarcontroller = AnimationController(
+    _gambarController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
     );
 
-    _thirdcontroller = AnimationController(
+    _thirdController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
     );
 
-    _fourthcontroller = AnimationController(
+    _fourthController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
     );
@@ -65,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    _bouncecontroller = AnimationController(
+    _bounceController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
@@ -75,17 +85,17 @@ class _SplashScreenState extends State<SplashScreen>
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
-        parent: _bouncecontroller,
+        parent: _bounceController,
         curve: Curves.easeInOut,
       ),
     );
 
-    _offsetgambar = Tween<Offset>(
+    _offsetGambar = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(-0.7, 0),
     ).animate(
       CurvedAnimation(
-        parent: _gambarcontroller,
+        parent: _gambarController,
         curve: Curves.easeInOut,
       ),
     );
@@ -102,7 +112,7 @@ class _SplashScreenState extends State<SplashScreen>
       begin: const Offset(-0.2, 2.1),
       end: const Offset(0.4, 1),
     ).animate(CurvedAnimation(
-      parent: _secondcontroller,
+      parent: _secondController,
       curve: Curves.easeInOut,
     ));
 
@@ -110,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
       begin: const Offset(11, 1.8),
       end: const Offset(0.4, 2),
     ).animate(CurvedAnimation(
-      parent: _thirdcontroller,
+      parent: _thirdController,
       curve: Curves.easeInOut,
     ));
 
@@ -118,11 +128,11 @@ class _SplashScreenState extends State<SplashScreen>
       begin: const Offset(0, 0),
       end: const Offset(0.8, -1.1),
     ).animate(CurvedAnimation(
-      parent: _fourthcontroller,
+      parent: _fourthController,
       curve: Curves.easeInOut,
     ));
 
-    _bouncelogo = Tween<double>(
+    _bounceLogo = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(
@@ -151,30 +161,36 @@ class _SplashScreenState extends State<SplashScreen>
         weight: 1.0,
       ),
     ]).animate(_backGroundController);
+  }
 
+  void _startAnimations() {
     _controller.forward();
-    _thirdcontroller.forward();
+    _thirdController.forward();
 
     Future.delayed(const Duration(milliseconds: 1400), () {
-      _secondcontroller.forward();
-    });
-
-    Future.delayed(const Duration(milliseconds: 1400), () {
-      _fourthcontroller.forward();
+      _secondController.forward();
+      _fourthController.forward();
+      _gambarController.forward();
     });
 
     Future.delayed(const Duration(milliseconds: 1500), () {
       _backGroundController.forward();
     });
+  }
 
-    Future.delayed(const Duration(milliseconds: 1400), () {
-      _gambarcontroller.forward();
-    });
-
-    // Trigger the fade-out animation after all other animations are complete
-    Future.delayed(const Duration(milliseconds: 2200), () {
-      _fadeOutController.forward();
-    });
+  void _navigateHome() async {
+    await Future.delayed(const Duration(milliseconds: 3000));
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const Introduction(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 200),
+      ),
+    );
   }
 
   @override
@@ -195,17 +211,17 @@ class _SplashScreenState extends State<SplashScreen>
                       children: [
                         AnimatedBuilder(
                           animation: Listenable.merge(
-                              [_controller, _gambarcontroller]),
+                              [_controller, _gambarController]),
                           builder: (context, child) {
                             return Transform.translate(
                               offset: _offsetAnimation.value *
-                                  (1 - _bouncelogo.value) *
+                                  (1 - _bounceLogo.value) *
                                   40,
                               child: child,
                             );
                           },
                           child: SlideTransition(
-                            position: _offsetgambar,
+                            position: _offsetGambar,
                             child: Image.asset(
                               'lib/assets/images/logonnew.png',
                               height: 70,
@@ -215,7 +231,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                         AnimatedBuilder(
                           animation: Listenable.merge(
-                              [_controller, _secondcontroller]),
+                              [_controller, _secondController]),
                           builder: (context, child) {
                             return SlideTransition(
                               position: _text1,
@@ -235,7 +251,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                         AnimatedBuilder(
                           animation: Listenable.merge(
-                              [_thirdcontroller, _fourthcontroller]),
+                              [_thirdController, _fourthController]),
                           builder: (context, child) {
                             return SlideTransition(
                               position: _text3,
@@ -268,13 +284,13 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void dispose() {
     _controller.dispose();
-    _secondcontroller.dispose();
-    _thirdcontroller.dispose();
-    _fourthcontroller.dispose();
-    _gambarcontroller.dispose();
+    _secondController.dispose();
+    _thirdController.dispose();
+    _fourthController.dispose();
+    _gambarController.dispose();
     _fadeOutController.dispose();
     _backGroundController.dispose();
-    _bouncecontroller.dispose();
+    _bounceController.dispose();
     super.dispose();
   }
 }

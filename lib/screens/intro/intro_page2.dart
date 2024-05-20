@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class IntroPage extends StatefulWidget {
-  const IntroPage({super.key});
+class IntroPage2 extends StatefulWidget {
+  const IntroPage2({super.key});
 
   @override
-  State<IntroPage> createState() => _IntroPageState();
+  State<IntroPage2> createState() => _IntroPage2State();
 }
 
-class _IntroPageState extends State<IntroPage> {
+class _IntroPage2State extends State<IntroPage2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

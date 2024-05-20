@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class IntroPage extends StatefulWidget {
-  const IntroPage({super.key});
+class IntroPage3 extends StatefulWidget {
+  const IntroPage3({super.key});
 
   @override
-  State<IntroPage> createState() => _IntroPageState();
+  State<IntroPage3> createState() => _IntroPage3State();
 }
 
-class _IntroPageState extends State<IntroPage> {
+class _IntroPage3State extends State<IntroPage3> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+     return Scaffold(
       body: Container(
        decoration: const BoxDecoration(
         gradient: LinearGradient(colors: 
