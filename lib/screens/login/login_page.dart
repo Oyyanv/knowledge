@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:knowledge/screens/home.dart';
 import 'package:knowledge/screens/intro/introduction.dart';
 
 class LoginPage extends StatefulWidget {
@@ -265,7 +266,16 @@ class _LoginPageState extends State<LoginPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return MyHomePage();
+                                          },
+                                        ),
+                                      );
+                                    },
                                     child: Text(
                                       'Sign In',
                                       style: TextStyle(

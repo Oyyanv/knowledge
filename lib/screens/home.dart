@@ -1,5 +1,9 @@
 // ignore_for_file: avoid_unnecessary_containers
 import 'package:flutter/material.dart';
+import 'package:knowledge/screens/dashboard/home_page.dart';
+import 'package:knowledge/screens/dashboard/lesson_page.dart';
+import 'package:knowledge/screens/dashboard/notification_page.dart';
+import 'package:knowledge/screens/dashboard/profile_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,25 +34,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Lesson',
-      style: optionStyle,
-    ),
-    Text(
-      'Notification',
-      style: optionStyle,
-    ),
-    Text(
-      'Profile',
-      style: optionStyle,
-    ),
+    HomePage(),
+    LessonPage(),
+    NotificationPage(),
+    ProfilePage(),
   ];
 
   void _onTimeTapped(int index) {
@@ -65,8 +55,11 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.only(left: 40),
+              ),
               Image.asset(
-                'lib/assets/images/book.png',
+                'lib/assets/images/logonnew.png',
                 width: 34,
                 height: 34,
               ),
