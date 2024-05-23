@@ -154,7 +154,7 @@ class _LessonPageState extends State<LessonPage> {
                       Formatuang(),
                     ],
                     decoration: InputDecoration(
-                      labelText: 'Harga',
+                      labelText: 'Price',
                     ),
                   ),
                 ],
