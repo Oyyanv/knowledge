@@ -1,24 +1,30 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: unnecessary_null_comparison, prefer_const_constructors
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:knowledge/db_helper.dart';
+import 'package:knowledge/formatuang.dart';
 
 class LessonPage extends StatefulWidget {
-  const LessonPage({super.key});
+  const LessonPage({Key? key}) : super(key: key);
 
   @override
   State<LessonPage> createState() => _LessonPageState();
 }
 
 class _LessonPageState extends State<LessonPage> {
-  final DBHelper dbHelper = DBHelper();
-  final _formKey = GlobalKey<FormState>();
+  final dbHelper = DBHelper();
+  final _formKeySubject = GlobalKey<FormState>();
+  final _formKeyCategory = GlobalKey<FormState>();
   final _mapelController = TextEditingController();
   final _kategorikelasController = TextEditingController();
   final _hargaController = TextEditingController();
   final _namamapel = TextEditingController();
   final _kelas = TextEditingController();
   final _inputgambar = TextEditingController();
+  String? _selectedmapel;
+  String? _selectedkelas;
 
   List<Map<String, dynamic>> _mapel = [];
   List<Map<String, dynamic>> _kategori = [];
@@ -27,8 +33,10 @@ class _LessonPageState extends State<LessonPage> {
   void initState() {
     super.initState();
     _refreshMapel();
-    _kategorimk();
+    _refreshKategori();
   }
+
+  //buat kategori mapel
 
   void _refreshMapel() async {
     final data = await dbHelper.queryAllMapel();
@@ -37,14 +45,13 @@ class _LessonPageState extends State<LessonPage> {
     });
   }
 
-  void _kategorimk() async {
-    final data = await dbHelper.queryAllMapel();
+  void _refreshKategori() async {
+    final data = await dbHelper.queryAllKategoriMapel();
     setState(() {
       _kategori = data;
     });
   }
 
-//form tambah subject
   void _showForm(int? id) {
     if (id != null) {
       final existingMapel = _mapel.firstWhere((element) => element['id'] == id);
@@ -69,7 +76,7 @@ class _LessonPageState extends State<LessonPage> {
               bottom: MediaQuery.of(context).viewInsets.bottom + 190,
             ),
             child: Form(
-              key: _formKey,
+              key: _formKeySubject,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -81,32 +88,148 @@ class _LessonPageState extends State<LessonPage> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  _kategori == null
+                      ? CircularProgressIndicator()
+                      : DropdownButtonFormField<String>(
+                          value: _selectedmapel,
+                          items: _kategori.map((kategori) {
+                            return DropdownMenuItem<String>(
+                              value: kategori['id_kategori'].toString(),
+                              child: Text(kategori['nama_mapel']),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedmapel = newValue!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Choose Subject',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Require Subject';
+                            }
+                            return null;
+                          },
+                        ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  _kategori == null //jadi kalo gaada kategorinya dia gak muncul
+                      ? CircularProgressIndicator() //berhubungan sama yg tadi itu, jadi fungsinya ini buat loading screen untuk jalanin mencari data dari tabel kategori
+                      : DropdownButtonFormField<String>(
+                          value: _selectedkelas,
+                          items: _kategori.map((kategori) {
+                            return DropdownMenuItem<String>(
+                              value: kategori['id_kategori'].toString(),
+                              child: Text(kategori['kelas']),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedkelas = newValue!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Choose Class',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Require Class';
+                            }
+                            return null;
+                          },
+                        ),
                   TextFormField(
-                    controller: _mapelController,
-                    decoration: const InputDecoration(labelText: 'Subject'),
+                    controller: _hargaController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                      Formatuang(),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: 'Harga',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showFormKategori(int? id) {
+    if (id != null) {
+      final existingKategori =
+          _kategori.firstWhere((element) => element['id_kategori'] == id);
+      _namamapel.text = existingKategori['nama_mapel'];
+      _kelas.text = existingKategori['kelas'];
+      _inputgambar.text = existingKategori['gambar'];
+    } else {
+      _namamapel.clear();
+      _kelas.clear();
+      _inputgambar.clear();
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      elevation: 5,
+      builder: (_) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom + 190,
+            ),
+            child: Form(
+              key: _formKeyCategory,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const Text(
+                    'Add New Category',
+                    style: TextStyle(
+                      color: Color(0xff404080),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _namamapel,
+                    decoration:
+                        const InputDecoration(labelText: 'Subject Name'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Require Name Subject';
+                        return 'Require Subject Name';
                       }
                       return null;
                     },
                   ),
                   TextFormField(
-                    controller: _kategorikelasController,
+                    controller: _kelas,
                     decoration: const InputDecoration(labelText: 'Class'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Require Category Class';
+                        return 'Require Class';
                       }
                       return null;
                     },
                   ),
                   TextFormField(
-                    controller: _hargaController,
-                    decoration: const InputDecoration(labelText: 'Price'),
+                    controller: _inputgambar,
+                    decoration: const InputDecoration(labelText: 'Image URL'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Require Price';
+                        return 'Require Image URL';
                       }
                       return null;
                     },
@@ -115,11 +238,11 @@ class _LessonPageState extends State<LessonPage> {
                   ElevatedButton(
                     child: Text(id == null ? 'Create' : 'Update'),
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKeyCategory.currentState!.validate()) {
                         if (id == null) {
-                          _addMapel();
+                          _addKategoriMapel();
                         } else {
-                          _updateMapel(id);
+                          _updateKategoriMapel(id);
                         }
                         Navigator.of(context).pop();
                       }
@@ -132,19 +255,6 @@ class _LessonPageState extends State<LessonPage> {
         ),
       ),
     );
-  }
-
-  //form tambah kategori
-  void _showformkategori(int? id) {
-    if (id != null) {
-      final exitingKategori =
-          _kategori.firstWhere((element) => element['id'] == id);
-      _namamapel.text = exitingKategori['nama_mapel'];
-      _kelas.text = exitingKategori['kelas'];
-      _inputgambar.text = exitingKategori['input_gambar'];
-    }
-
-    
   }
 
   Future<void> _addMapel() async {
@@ -166,12 +276,37 @@ class _LessonPageState extends State<LessonPage> {
     _refreshMapel();
   }
 
+  Future<void> _addKategoriMapel() async {
+    await dbHelper.insertKategoriMapel({
+      'nama_mapel': _namamapel.text,
+      'kelas': _kelas.text,
+      'gambar': _inputgambar.text,
+    });
+    _refreshKategori();
+  }
+
+  Future<void> _updateKategoriMapel(int id) async {
+    await dbHelper.updateKategoriMapel({
+      'id_kategori': id,
+      'nama_mapel': _namamapel.text,
+      'kelas': _kelas.text,
+      'gambar': _inputgambar.text,
+    });
+    _refreshKategori();
+  }
+
   void _deleteMapel(int id) async {
     await dbHelper.deleteMapel(id);
-    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Mapel deleted')));
+        .showSnackBar(const SnackBar(content: Text('Subject deleted')));
     _refreshMapel();
+  }
+
+  void _deleteKategori(int id) async {
+    await dbHelper.deleteKategoriMapel(id);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Category deleted')));
+    _refreshKategori();
   }
 
   @override
@@ -179,6 +314,67 @@ class _LessonPageState extends State<LessonPage> {
     return Scaffold(
       body: Column(
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Text(
+                  'Category List',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff4B4949),
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                child: TextButton(
+                  onPressed: () => _showFormKategori(null),
+                  child: Icon(
+                    Icons.add,
+                    color: Color(0xff4B4949),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Visibility(
+            visible: _kategori.isNotEmpty,
+            child: Expanded(
+              child: ListView(
+                children: _kategori.map(
+                  (kategori) {
+                    return Card(
+                      margin: const EdgeInsets.all(15),
+                      child: ListTile(
+                        title: Text(kategori['nama_mapel']),
+                        subtitle: Text(kategori['kelas']),
+                        trailing: SizedBox(
+                          width: 100,
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () =>
+                                    _showFormKategori(kategori['id_kategori']),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () =>
+                                    _deleteKategori(kategori['id_kategori']),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -205,7 +401,6 @@ class _LessonPageState extends State<LessonPage> {
               ),
             ],
           ),
-          //ini kalo data mapelnya kosong jadi text dan button tambah nya gak ikutan ilang
           Visibility(
             visible: _mapel.isNotEmpty,
             child: Expanded(
@@ -216,24 +411,7 @@ class _LessonPageState extends State<LessonPage> {
                       margin: const EdgeInsets.all(15),
                       child: ListTile(
                         title: Text(mapel['mapel']),
-                        subtitle: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      mapel['kategorikelas'],
-                                    ),
-                                    Text(
-                                      mapel['harga'],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                        subtitle: Text(mapel['kategorikelas']),
                         trailing: SizedBox(
                           width: 100,
                           child: Row(
