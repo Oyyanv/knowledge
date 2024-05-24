@@ -214,9 +214,27 @@ class _LessonPageState extends State<LessonPage> {
                       return null;
                     },
                   ),
-                  TextFormField(
-                    controller: _kelas,
-                    decoration: const InputDecoration(labelText: 'Class'),
+                  SizedBox(height: 10),
+                  DropdownButtonFormField<String>(
+                    value: _kelas.text.isNotEmpty ? _kelas.text : null,
+                    items: ['X', 'XI', 'XII']
+                        .map((kelas) {
+                          return DropdownMenuItem<String>(
+                            value: kelas,
+                            child: Text(kelas),
+                          );
+                        })
+                        .toSet()
+                        .toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _kelas.text = newValue!;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Class',
+                      border: OutlineInputBorder(),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Require Class';
@@ -234,7 +252,7 @@ class _LessonPageState extends State<LessonPage> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 50),
+                  SizedBox(height: 50),
                   ElevatedButton(
                     child: Text(id == null ? 'Create' : 'Update'),
                     onPressed: () {
@@ -277,11 +295,30 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _addKategoriMapel() async {
-    await dbHelper.insertKategoriMapel({
-      'nama_mapel': _namamapel.text,
-      'kelas': _kelas.text,
-      'gambar': _inputgambar.text,
-    });
+    // Cek apakah kelas sudah ada
+    final existingCategory = _kategori.firstWhere(
+      (category) => category['kelas'] == _kelas.text,
+      //id_kategori = 1 maksudnya kalo gk ditemukan atau bisa aja kmu sebut null
+      orElse: () => {'id_kategori': -1},
+    );
+
+    if (existingCategory != null) {
+      // kalo kelasnya sudah ada nih, jadi updatenya cuman mapel saja gitu
+      await dbHelper.updateKategoriMapel({
+        'id_kategori': existingCategory['id_kategori'],
+        'nama_mapel': _namamapel.text,
+        'kelas': _kelas.text,
+        'gambar': _inputgambar.text,
+      });
+    } else {
+      // kalo kelasnya gada buat baru, tapi gak mungkin juga sih kelasnya cuman ada 3
+      await dbHelper.insertKategoriMapel({
+        'nama_mapel': _namamapel.text,
+        'kelas': _kelas.text,
+        'gambar': _inputgambar.text,
+      });
+    }
+
     _refreshKategori();
   }
 
@@ -342,37 +379,72 @@ class _LessonPageState extends State<LessonPage> {
           ),
           Visibility(
             visible: _kategori.isNotEmpty,
-            child: Expanded(
-              child: ListView(
-                children: _kategori.map(
-                  (kategori) {
-                    return Card(
-                      margin: const EdgeInsets.all(15),
-                      child: ListTile(
-                        title: Text(kategori['nama_mapel']),
-                        subtitle: Text(kategori['kelas']),
-                        trailing: SizedBox(
-                          width: 100,
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () =>
-                                    _showFormKategori(kategori['id_kategori']),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () =>
-                                    _deleteKategori(kategori['id_kategori']),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ).toList(),
-              ),
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius:
+                        BorderRadius.circular(10.0), // Atur border radius
+                  ),
+                  margin: EdgeInsets.only(
+                      left: 15,
+                      right: 15,
+                      top: 10,
+                      bottom: 10), // jarak halaman
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15), // jarak didalam
+                  child: DropdownButton<String>(
+                    value: _selectedmapel,
+                    items: _kategori.map((kategori) {
+                      return DropdownMenuItem<String>(
+                        value: kategori['id_kategori'].toString(),
+                        child: Text(kategori['nama_mapel']),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedmapel = newValue!;
+                      });
+                    },
+                    hint: Text('Choose Subject'),
+                    isExpanded:
+                        true, //dropdown menampilkan pilihan secara penuh
+                    underline: Container(), // Hilangkan garis bawah dropdown
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius:
+                        BorderRadius.circular(10.0), // Atur border radius
+                  ),
+                  margin: EdgeInsets.only(
+                      left: 15,
+                      right: 15,
+                      top: 10,
+                      bottom: 10), // jarak halaman
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: DropdownButton<String>(
+                    value: _selectedkelas,
+                    items: _kategori.map((kategori) {
+                      return DropdownMenuItem<String>(
+                        value: kategori['id_kategori'].toString(),
+                        child: Text(kategori['kelas']),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedkelas = newValue!;
+                      });
+                    },
+                    hint: Text('Choose Class'),
+                    isExpanded:
+                        true, //dropdown menampilkan pilihan secara penuh
+                    underline: Container(), // Hilangkan garis bawah dropdown
+                  ),
+                ),
+              ],
             ),
           ),
           Row(

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:knowledge/screens/dashboard/home_page.dart';
 import 'package:knowledge/screens/dashboard/lesson_page.dart';
+import 'package:knowledge/screens/dashboard/listtable.dart';
 import 'package:knowledge/screens/dashboard/notification_page.dart';
 import 'package:knowledge/screens/dashboard/profile_page.dart';
 
@@ -37,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     LessonPage(),
+    AdminTable(),
     NotificationPage(),
     ProfilePage(),
   ];
@@ -105,6 +107,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book_rounded),
+            label: "",
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.table_rows),
             label: "",
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
           ),
