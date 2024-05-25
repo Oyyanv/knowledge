@@ -1,8 +1,12 @@
 // ignore_for_file: unnecessary_null_comparison, prefer_const_constructors
 
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:knowledge/db_helper.dart';
 import 'package:knowledge/formatuang.dart';
 
@@ -15,6 +19,7 @@ class LessonPage extends StatefulWidget {
 
 class _LessonPageState extends State<LessonPage> {
   final dbHelper = DBHelper();
+  //form
   final _formKeySubject = GlobalKey<FormState>();
   final _formKeyCategory = GlobalKey<FormState>();
   final _mapelController = TextEditingController();
@@ -23,11 +28,22 @@ class _LessonPageState extends State<LessonPage> {
   final _namamapel = TextEditingController();
   final _kelas = TextEditingController();
   final _inputgambar = TextEditingController();
+  //kategori
   String? _selectedmapel;
   String? _selectedkelas;
-
+  //array data
   List<Map<String, dynamic>> _mapel = [];
   List<Map<String, dynamic>> _kategori = [];
+  //coba upload gambar #1 berhasil wkwkwkw
+  File? _gambar;
+  Future _pilihgambar() async {
+    final returngambar =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (returngambar == null) return;
+    setState(() {
+      _gambar = File(returngambar.path);
+    });
+  }
 
   @override
   void initState() {
@@ -36,8 +52,6 @@ class _LessonPageState extends State<LessonPage> {
     _refreshKategori();
   }
 
-  //buat kategori mapel
-
   void _refreshMapel() async {
     final data = await dbHelper.queryAllMapel();
     setState(() {
@@ -45,6 +59,7 @@ class _LessonPageState extends State<LessonPage> {
     });
   }
 
+  //buat kategori mapel
   void _refreshKategori() async {
     final data = await dbHelper.queryAllKategoriMapel();
     setState(() {
@@ -136,12 +151,12 @@ class _LessonPageState extends State<LessonPage> {
                             });
                           },
                           decoration: InputDecoration(
-                            labelText: 'Choose Class',
+                            labelText: 'Choose Grade',
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Require Class';
+                              return 'Require Grade';
                             }
                             return null;
                           },
@@ -232,26 +247,26 @@ class _LessonPageState extends State<LessonPage> {
                       });
                     },
                     decoration: InputDecoration(
-                      labelText: 'Class',
+                      labelText: 'Grade',
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Require Class';
+                        return 'Require Grade';
                       }
                       return null;
                     },
                   ),
-                  TextFormField(
-                    controller: _inputgambar,
-                    decoration: const InputDecoration(labelText: 'Image URL'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Require Image URL';
-                      }
-                      return null;
-                    },
+                  TextButton(
+                    onPressed: _pilihgambar,
+                    child: Text('Upload Image'),
                   ),
+                  if (_gambar != null)
+                    Image.file(
+                      _gambar!,
+                      width: 100,
+                      height: 100,
+                    ),
                   SizedBox(height: 50),
                   ElevatedButton(
                     child: Text(id == null ? 'Create' : 'Update'),
@@ -295,27 +310,23 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _addKategoriMapel() async {
-    // Cek apakah kelas sudah ada
-    final existingCategory = _kategori.firstWhere(
-      (category) => category['kelas'] == _kelas.text,
-      //id_kategori = 1 maksudnya kalo gk ditemukan atau bisa aja kmu sebut null
-      orElse: () => {'id_kategori': -1},
-    );
+    if (_gambar != null) {
+      // Membaca gambar sebagai byte array
+      List<int> imageBytes = await _gambar!.readAsBytes();
+      // Mengonversi byte array menjadi string base64
+      String base64Image = base64Encode(imageBytes);
 
-    if (existingCategory != null) {
-      // kalo kelasnya sudah ada nih, jadi updatenya cuman mapel saja gitu
-      await dbHelper.updateKategoriMapel({
-        'id_kategori': existingCategory['id_kategori'],
-        'nama_mapel': _namamapel.text,
-        'kelas': _kelas.text,
-        'gambar': _inputgambar.text,
-      });
-    } else {
-      // kalo kelasnya gada buat baru, tapi gak mungkin juga sih kelasnya cuman ada 3
+      // Menyimpan entri ke dalam database, termasuk string base64 dari gambar
       await dbHelper.insertKategoriMapel({
         'nama_mapel': _namamapel.text,
         'kelas': _kelas.text,
-        'gambar': _inputgambar.text,
+        'gambar': base64Image, // Menyimpan gambar sebagai string base64
+      });
+    } else {
+      // Jika gambar tidak dipilih, simpan entri tanpa gambar
+      await dbHelper.insertKategoriMapel({
+        'nama_mapel': _namamapel.text,
+        'kelas': _kelas.text,
       });
     }
 
@@ -323,12 +334,28 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _updateKategoriMapel(int id) async {
-    await dbHelper.updateKategoriMapel({
-      'id_kategori': id,
-      'nama_mapel': _namamapel.text,
-      'kelas': _kelas.text,
-      'gambar': _inputgambar.text,
-    });
+    if (_gambar != null) {
+      // Membaca gambar sebagai byte array
+      List<int> imageBytes = await _gambar!.readAsBytes();
+      // Mengonversi byte array menjadi string base64
+      String base64Image = base64Encode(imageBytes);
+
+      // Memperbarui entri di database, termasuk string base64 dari gambar
+      await dbHelper.updateKategoriMapel({
+        'id_kategori': id,
+        'nama_mapel': _namamapel.text,
+        'kelas': _kelas.text,
+        'gambar': base64Image, // Menyimpan gambar sebagai string base64
+      });
+    } else {
+      // Jika gambar tidak dipilih, hanya memperbarui entri tanpa gambar
+      await dbHelper.updateKategoriMapel({
+        'id_kategori': id,
+        'nama_mapel': _namamapel.text,
+        'kelas': _kelas.text,
+      });
+    }
+
     _refreshKategori();
   }
 
@@ -379,72 +406,46 @@ class _LessonPageState extends State<LessonPage> {
           ),
           Visibility(
             visible: _kategori.isNotEmpty,
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius:
-                        BorderRadius.circular(10.0), // Atur border radius
-                  ),
-                  margin: EdgeInsets.only(
-                      left: 15,
-                      right: 15,
-                      top: 10,
-                      bottom: 10), // jarak halaman
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 15), // jarak didalam
-                  child: DropdownButton<String>(
-                    value: _selectedmapel,
-                    items: _kategori.map((kategori) {
-                      return DropdownMenuItem<String>(
-                        value: kategori['id_kategori'].toString(),
-                        child: Text(kategori['nama_mapel']),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedmapel = newValue!;
-                      });
-                    },
-                    hint: Text('Choose Subject'),
-                    isExpanded:
-                        true, //dropdown menampilkan pilihan secara penuh
-                    underline: Container(), // Hilangkan garis bawah dropdown
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius:
-                        BorderRadius.circular(10.0), // Atur border radius
-                  ),
-                  margin: EdgeInsets.only(
-                      left: 15,
-                      right: 15,
-                      top: 10,
-                      bottom: 10), // jarak halaman
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: DropdownButton<String>(
-                    value: _selectedkelas,
-                    items: _kategori.map((kategori) {
-                      return DropdownMenuItem<String>(
-                        value: kategori['id_kategori'].toString(),
-                        child: Text(kategori['kelas']),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedkelas = newValue!;
-                      });
-                    },
-                    hint: Text('Choose Class'),
-                    isExpanded:
-                        true, //dropdown menampilkan pilihan secara penuh
-                    underline: Container(), // Hilangkan garis bawah dropdown
-                  ),
-                ),
-              ],
+            child: Expanded(
+              child: ListView(
+                children: _kategori.map(
+                  (kategori) {
+                    return Card(
+                      margin: const EdgeInsets.all(15),
+                      child: ListTile(
+                        title: Text(kategori['nama_mapel']),
+                        subtitle: Text(kategori['kelas']),
+                        leading: kategori['gambar'] != null &&
+                                kategori['gambar'] != ''
+                            ? Image.memory(
+                                base64Decode(kategori['gambar']),
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(Icons.person, size: 50),
+                        trailing: SizedBox(
+                          width: 100,
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () =>
+                                    _showFormKategori(kategori['id_kategori']),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () =>
+                                    _deleteKategori(kategori['id_kategori']),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
             ),
           ),
           Row(

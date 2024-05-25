@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -101,6 +102,23 @@ class DBHelper {
     Database db = await database;
     return await db
         .delete('kategori_mapel', where: 'id_kategori = ?', whereArgs: [id]);
+  }
+
+  //tambah gambar kategori
+   Future<int> saveImage(Uint8List imageBytes) async {
+    Database db = await database;
+    return await db.insert('kategori_mapel', {'gambar': imageBytes});
+  }
+
+  // ambil image dari database
+  Future<Uint8List?> getImage(int id) async {
+    Database db = await database;
+    List<Map<String, dynamic>> results = await db.query('kategori_mapel',
+        columns: ['gambar'], where: 'id_kategori = ?', whereArgs: [id]);
+    if (results.isNotEmpty) {
+      return results.first['gambar'] as Uint8List?;
+    }
+    return null;
   }
 
   // mapel
