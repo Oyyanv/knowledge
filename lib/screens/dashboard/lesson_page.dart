@@ -139,10 +139,10 @@ class _LessonPageState extends State<LessonPage> {
                       ? CircularProgressIndicator() //berhubungan sama yg tadi itu, jadi fungsinya ini buat loading screen untuk jalanin mencari data dari tabel kategori
                       : DropdownButtonFormField<String>(
                           value: _selectedkelas,
-                          items: _kategori.map((kategori) {
+                          items: ['X','XI','XII'].map((kelas) {
                             return DropdownMenuItem<String>(
-                              value: kategori['id_kategori'].toString(),
-                              child: Text(kategori['kelas']),
+                              value: kelas,
+                              child: Text(kelas),
                             );
                           }).toList(),
                           onChanged: (newValue) {
@@ -310,20 +310,44 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _addKategoriMapel() async {
+    // Cek apakah ada kategori dengan kelas yang sama
+    final existingKategori = _kategori.firstWhere(
+      (kategori) => kategori['kelas'] == _kelas.text,
+      orElse: () => {'kategori_mapel': -1},
+    );
+
+    // Jika kategori dengan kelas yang sama ditemukan
+    if (existingKategori != {'kategori_mapel': -1}) {
+      // Cek apakah nama mapel sama dengan yang sudah ada
+      final sameMapelExists = _kategori.any(
+        (kategori) =>
+            kategori['nama_mapel'] == _namamapel.text &&
+            kategori['kelas'] == _kelas.text,
+      );
+
+      // Jika nama mapel juga sama, tampilkan Snackbar
+      if (sameMapelExists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Category with the same subject and class already exists in the database'),
+          ),
+        );
+        return; // Hentikan proses penambahan data baru
+      }
+    }
+
+    // Jika tidak ada kategori dengan kelas yang sama atau nama mapel berbeda, tambahkan data baru
     if (_gambar != null) {
-      // Membaca gambar sebagai byte array
       List<int> imageBytes = await _gambar!.readAsBytes();
-      // Mengonversi byte array menjadi string base64
       String base64Image = base64Encode(imageBytes);
 
-      // Menyimpan entri ke dalam database, termasuk string base64 dari gambar
       await dbHelper.insertKategoriMapel({
         'nama_mapel': _namamapel.text,
         'kelas': _kelas.text,
-        'gambar': base64Image, // Menyimpan gambar sebagai string base64
+        'gambar': base64Image,
       });
     } else {
-      // Jika gambar tidak dipilih, simpan entri tanpa gambar
       await dbHelper.insertKategoriMapel({
         'nama_mapel': _namamapel.text,
         'kelas': _kelas.text,
@@ -334,21 +358,45 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _updateKategoriMapel(int id) async {
+    // Cek apakah ada kategori dengan kelas yang sama kecuali untuk entri yang sedang diperbarui
+    final existingKategori = _kategori.firstWhere(
+      (kategori) =>
+          kategori['kelas'] == _kelas.text && kategori['id_kategori'] != id,
+      orElse: () => {'kategori_mapel': -1},
+    );
+
+    // Jika kategori dengan kelas yang sama ditemukan
+    if (existingKategori != null) {
+      // Cek apakah nama mapel sama dengan yang sudah ada
+      final sameMapelExists = _kategori.any(
+        (kategori) =>
+            kategori['nama_mapel'] == _namamapel.text &&
+            kategori['kelas'] == _kelas.text,
+      );
+
+      // Jika nama mapel juga sama, tampilkan Snackbar
+      if (sameMapelExists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Category already exists in the database'),
+          ),
+        );
+        return; // Hentikan proses pembaruan data
+      }
+    }
+
+    // Jika tidak ada kategori dengan kelas yang sama atau nama mapel berbeda, lakukan pembaruan data
     if (_gambar != null) {
-      // Membaca gambar sebagai byte array
       List<int> imageBytes = await _gambar!.readAsBytes();
-      // Mengonversi byte array menjadi string base64
       String base64Image = base64Encode(imageBytes);
 
-      // Memperbarui entri di database, termasuk string base64 dari gambar
       await dbHelper.updateKategoriMapel({
         'id_kategori': id,
         'nama_mapel': _namamapel.text,
         'kelas': _kelas.text,
-        'gambar': base64Image, // Menyimpan gambar sebagai string base64
+        'gambar': base64Image,
       });
     } else {
-      // Jika gambar tidak dipilih, hanya memperbarui entri tanpa gambar
       await dbHelper.updateKategoriMapel({
         'id_kategori': id,
         'nama_mapel': _namamapel.text,
@@ -406,46 +454,74 @@ class _LessonPageState extends State<LessonPage> {
           ),
           Visibility(
             visible: _kategori.isNotEmpty,
-            child: Expanded(
-              child: ListView(
-                children: _kategori.map(
-                  (kategori) {
-                    return Card(
-                      margin: const EdgeInsets.all(15),
-                      child: ListTile(
-                        title: Text(kategori['nama_mapel']),
-                        subtitle: Text(kategori['kelas']),
-                        leading: kategori['gambar'] != null &&
-                                kategori['gambar'] != ''
-                            ? Image.memory(
-                                base64Decode(kategori['gambar']),
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              )
-                            : Icon(Icons.person, size: 50),
-                        trailing: SizedBox(
-                          width: 100,
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () =>
-                                    _showFormKategori(kategori['id_kategori']),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () =>
-                                    _deleteKategori(kategori['id_kategori']),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ).toList(),
-              ),
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius:
+                        BorderRadius.circular(10.0), // Atur border radius
+                  ),
+                  margin: EdgeInsets.only(
+                    left: 15,
+                    right: 15,
+                    bottom: 10,
+                    top: 10,
+                  ), // jarak halaman
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15), // jarak didalam
+                  child: DropdownButton<String>(
+                    value: _selectedmapel,
+                    items: _kategori.map((kategori) {
+                      return DropdownMenuItem<String>(
+                        value: kategori['id_kategori'].toString(),
+                        child: Text(kategori['nama_mapel']),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedmapel = newValue!;
+                      });
+                    },
+                    hint: Text('Choose Subject'),
+                    isExpanded:
+                        true, //dropdown menampilkan pilihan secara penuh
+                    underline: Container(), // Hilangkan garis bawah dropdown
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius:
+                        BorderRadius.circular(10.0), // Atur border radius
+                  ),
+                  margin: EdgeInsets.only(
+                    left: 15,
+                    right: 15,
+                    bottom: 10,
+                    top: 10,
+                  ), // jarak halaman
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: DropdownButton<String>(
+                    value: _selectedkelas,
+                    items: ['X', 'XI', 'XII'].map((kelas) {
+                      return DropdownMenuItem<String>(
+                        value: kelas,
+                        child: Text(kelas),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedkelas = newValue!;
+                      });
+                    },
+                    hint: Text('Choose Class'),
+                    isExpanded:
+                        true, //dropdown menampilkan pilihan secara penuh
+                    underline: Container(), // Hilangkan garis bawah dropdown
+                  ),
+                ),
+              ],
             ),
           ),
           Row(
