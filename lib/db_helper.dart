@@ -205,4 +205,44 @@ class DBHelper {
     }
     return null;
   }
+
+  //banner
+  Future<int> insertBanner(Map<String, dynamic> row) async {
+    Database db = await database;
+    return await db.insert('banner', row);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllBanner() async {
+    Database db = await database;
+    return await db.query('banner');
+  }
+
+  Future<int> updateBanner(Map<String, dynamic> row) async {
+    Database db = await database;
+    int id = row['id'];
+    return await db.update('banner', row, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> deleteBanner(int id) async {
+    Database db = await database;
+    return await db.delete('banner', where: 'id = ?', whereArgs: [id]);
+  }
+
+  //tambah gambar banner
+  //lalu ubah jadi 8bit
+  Future<int> tambahBanner(Uint8List bannerBytes) async {
+    Database db = await database;
+    return await db.insert('banner', {'gambar_banner': bannerBytes});
+  }
+
+  // ambil image dari database
+  Future<Uint8List?> ambilBanner(int id) async {
+    Database db = await database;
+    List<Map<String, dynamic>> results = await db.query('banner',
+        columns: ['gambar_banner'], where: 'guru = ?', whereArgs: [id]);
+    if (results.isNotEmpty) {
+      return results.first['gambar_banner'] as Uint8List?;
+    }
+    return null;
+  }
 }
