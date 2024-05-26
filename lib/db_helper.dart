@@ -20,7 +20,8 @@ class DBHelper {
     String path = join(await getDatabasesPath(), 'crud.db');
     return await openDatabase(
       path,
-      version: 5,
+      version: 5, //versi database sudah ke 5
+      //table pertamakali dibikin
       onCreate: (db, version) async {
         await db.execute("CREATE TABLE kategori_mapel("
             "id_kategori INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -42,9 +43,16 @@ class DBHelper {
             "nama TEXT, "
             "email TEXT, "
             "gender TEXT, "
-            "kemampuanmapel TEXT)");
+            "kemampuanmapel TEXT, "
+            "gambar_guru TEXT)");
+        await db.execute("CREATE TABLE banner("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "gambar_banner TEXT)");
       },
+      //onupgrade tablenya itu berarti ada yg di ubah fieldnya atau ada yg nambah table baru
       onUpgrade: (db, oldVersion, newVersion) async {
+        //update table pas db versi 2
+        //perubahan = + kemampuan mapel
         if (oldVersion < 2) {
           await db.execute("CREATE TABLE guru("
               "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -54,6 +62,8 @@ class DBHelper {
               "kemampuanmapel TEXT)");
         }
         if (oldVersion < 3) {
+          //update table pas db versi 3
+          //perubahan = + foreign key guru
           await db.execute("CREATE TABLE kategori_mapel("
               "id_kategori INTEGER PRIMARY KEY AUTOINCREMENT, "
               "nama_mapel TEXT, "
@@ -69,12 +79,24 @@ class DBHelper {
               "kemampuan_mapel"
               "FOREIGN KEY(id_guru) REFERENCES guru(id))");
         }
-        if (oldVersion < 5) {
+        if (oldVersion < 4) {
+          //update table pas db versi 4
+          //jika db versi 3 maka field nya tidak berubah
+          //perubahan = mengubah tipe data gambar dari BLOB ke TEXT
           await db.execute("CREATE TABLE kategori_mapel("
               "id_kategori INTEGER PRIMARY KEY AUTOINCREMENT, "
               "nama_mapel TEXT, "
               "kelas TEXT, "
-              "gambar BLOB)");
+              "gambar TEXT)");
+        }
+        if (oldVersion < 5) {
+          //update table versi db 5
+          //alter table itu penambahan field untuk guru
+          //perubahan = + table baru, + field baru untuk guru
+          await db.execute("ALTER TABLE guru ADD COLUMN gambar_guru TEXT");
+          await db.execute("CREATE TABLE banner("
+              "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+              "gambar_banner TEXT)");
         }
       },
     );
@@ -105,7 +127,8 @@ class DBHelper {
   }
 
   //tambah gambar kategori
-   Future<int> saveImage(Uint8List imageBytes) async {
+  //lalu ubah jadi 8bit
+  Future<int> saveImage(Uint8List imageBytes) async {
     Database db = await database;
     return await db.insert('kategori_mapel', {'gambar': imageBytes});
   }
@@ -163,5 +186,23 @@ class DBHelper {
   Future<int> deleteGuru(int id) async {
     Database db = await database;
     return await db.delete('guru', where: 'id = ?', whereArgs: [id]);
+  }
+
+  //tambah gambar guru
+  //lalu ubah jadi 8bit
+  Future<int> tambahImage(Uint8List imageBytes) async {
+    Database db = await database;
+    return await db.insert('guru', {'gambar_guru': imageBytes});
+  }
+
+  // ambil image dari database
+  Future<Uint8List?> ambilGambar(int id) async {
+    Database db = await database;
+    List<Map<String, dynamic>> results = await db.query('guru',
+        columns: ['gambar_guru'], where: 'guru = ?', whereArgs: [id]);
+    if (results.isNotEmpty) {
+      return results.first['gambar_guru'] as Uint8List?;
+    }
+    return null;
   }
 }

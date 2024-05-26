@@ -34,7 +34,7 @@ class _LessonPageState extends State<LessonPage> {
   //array data
   List<Map<String, dynamic>> _mapel = [];
   List<Map<String, dynamic>> _kategori = [];
-  //coba upload gambar #1 berhasil wkwkwkw
+  //coba upload gambar #1
   File? _gambar;
   Future _pilihgambar() async {
     final returngambar =
@@ -48,6 +48,7 @@ class _LessonPageState extends State<LessonPage> {
   @override
   void initState() {
     super.initState();
+    //memperbarui data tampilan terbaru
     _refreshMapel();
     _refreshKategori();
   }
@@ -139,7 +140,7 @@ class _LessonPageState extends State<LessonPage> {
                       ? CircularProgressIndicator() //berhubungan sama yg tadi itu, jadi fungsinya ini buat loading screen untuk jalanin mencari data dari tabel kategori
                       : DropdownButtonFormField<String>(
                           value: _selectedkelas,
-                          items: ['X','XI','XII'].map((kelas) {
+                          items: ['X', 'XI', 'XII'].map((kelas) {
                             return DropdownMenuItem<String>(
                               value: kelas,
                               child: Text(kelas),
@@ -257,16 +258,23 @@ class _LessonPageState extends State<LessonPage> {
                       return null;
                     },
                   ),
-                  TextButton(
-                    onPressed: _pilihgambar,
-                    child: Text('Upload Image'),
+                  SizedBox(height: 15,),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: _pilihgambar,
+                        child: Text('Upload Image'),
+                      ),
+                      if (_gambar != null)
+                        Image.file(
+                          _gambar!,
+                          width: 150,
+                          height: 150,
+                          //biar jadi kotak
+                          fit: BoxFit.cover,
+                        ),
+                    ],
                   ),
-                  if (_gambar != null)
-                    Image.file(
-                      _gambar!,
-                      width: 100,
-                      height: 100,
-                    ),
                   SizedBox(height: 50),
                   ElevatedButton(
                     child: Text(id == null ? 'Create' : 'Update'),
@@ -330,7 +338,7 @@ class _LessonPageState extends State<LessonPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                'Category with the same subject and class already exists in the database'),
+                'Category already exists in the database'),
           ),
         );
         return; // Hentikan proses penambahan data baru
@@ -339,7 +347,9 @@ class _LessonPageState extends State<LessonPage> {
 
     // Jika tidak ada kategori dengan kelas yang sama atau nama mapel berbeda, tambahkan data baru
     if (_gambar != null) {
+      //dibaca sebagai byte
       List<int> imageBytes = await _gambar!.readAsBytes();
+      //diubah lagi dari byte ke format base64 lalu masuk database
       String base64Image = base64Encode(imageBytes);
 
       await dbHelper.insertKategoriMapel({
@@ -432,7 +442,7 @@ class _LessonPageState extends State<LessonPage> {
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: Text(
-                  'Category List',
+                  'Category',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
