@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:knowledge/db_helper.dart';
-import 'package:knowledge/screens/home.dart';
+// import 'package:knowledge/screens/home.dart';
 
 class Tableguru extends StatefulWidget {
   const Tableguru({Key? key}) : super(key: key);
@@ -318,10 +318,9 @@ class _TableguruState extends State<Tableguru> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) {
-              return const MyHomePage();
-            }));
+            Navigator.pop(
+              context,
+            );
           },
         ),
       ),

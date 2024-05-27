@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:knowledge/db_helper.dart';
-import 'package:knowledge/screens/home.dart';
+// import 'package:knowledge/screens/home.dart';
 
 class Tablekategori extends StatefulWidget {
   const Tablekategori({super.key});
@@ -272,10 +272,9 @@ class _TablekategoriState extends State<Tablekategori> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) {
-              return const MyHomePage();
-            }));
+            Navigator.pop(
+              context,
+            );
           },
         ),
       ),
@@ -296,18 +295,6 @@ class _TablekategoriState extends State<Tablekategori> {
                   ),
                 ),
               ),
-              // Container(
-              //   margin: EdgeInsets.only(right: 10),
-              //   child: TextButton(
-              //     onPressed: () {
-              //       _showFormKategori(null);
-              //     },
-              //     child: Icon(
-              //       Icons.add,
-              //       color: Color(0xff4B4949),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
           Visibility(

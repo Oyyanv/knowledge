@@ -31,7 +31,7 @@ class AdminTable extends StatelessWidget {
                   margin: const EdgeInsets.all(10),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return Tableguru();
                       }));
@@ -46,7 +46,7 @@ class AdminTable extends StatelessWidget {
                   margin: const EdgeInsets.all(10),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return Tablekategori();
                       }));
@@ -61,7 +61,7 @@ class AdminTable extends StatelessWidget {
                   margin: const EdgeInsets.all(10),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return BannerPage();
                       }));

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:knowledge/db_helper.dart';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
-import 'package:knowledge/screens/home.dart';
+// import 'package:knowledge/screens/home.dart';
 
 class BannerPage extends StatefulWidget {
   // ignore: use_key_in_widget_constructors
@@ -181,11 +181,10 @@ class _BannerPageState extends State<BannerPage> {
             Icons.arrow_back,
             color: Colors.white,
           ),
-          onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) {
-              return const MyHomePage();
-            }));
+           onPressed: () {
+            Navigator.pop(
+              context,
+            );
           },
         ),
       ),
