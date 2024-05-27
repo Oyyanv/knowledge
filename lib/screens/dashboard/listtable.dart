@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:knowledge/screens/dashboard/Admin/tablebanner.dart';
 import 'package:knowledge/screens/dashboard/Admin/tableguru.dart';
+import 'package:knowledge/screens/dashboard/Admin/tablekategori.dart';
 
 class AdminTable extends StatelessWidget {
   const AdminTable({Key? key}) : super(key: key);
@@ -46,7 +48,7 @@ class AdminTable extends StatelessWidget {
                     onTap: () {
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                        return Tableguru();
+                        return Tablekategori();
                       }));
                     },
                     child: const ListTile(
@@ -61,7 +63,7 @@ class AdminTable extends StatelessWidget {
                     onTap: () {
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                        return Tableguru();
+                        return BannerPage();
                       }));
                     },
                     child: const ListTile(
