@@ -74,6 +74,7 @@ class _TableguruState extends State<Tableguru> {
     }
 
     showModalBottomSheet(
+      backgroundColor: Color(0xffFFFFFF),
       context: context,
       isScrollControlled: true,
       elevation: 5,
@@ -82,7 +83,7 @@ class _TableguruState extends State<Tableguru> {
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 120,
             ),
             child: Form(
               key: _formKeyGuru,
@@ -142,6 +143,7 @@ class _TableguruState extends State<Tableguru> {
                   ),
                   SizedBox(height: 10),
                   DropdownButtonFormField<String>(
+                    dropdownColor: Color(0xffFFFFFF),
                     value: _genderGuruController.text.isNotEmpty
                         ? _genderGuruController.text
                         : null,
@@ -176,8 +178,18 @@ class _TableguruState extends State<Tableguru> {
                   Row(
                     children: [
                       TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Color(0xff6B6BA6),
+                          ),
+                        ),
                         onPressed: _pilihimg,
-                        child: Text('Upload Image'),
+                        child: Text(
+                          'Upload Image',
+                          style: TextStyle(
+                            color: Color(0xffFFFFFF),
+                          ),
+                        ),
                       ),
                       if (_profileGuru != null)
                         Image.file(
@@ -190,18 +202,32 @@ class _TableguruState extends State<Tableguru> {
                     ],
                   ),
                   SizedBox(height: 50),
-                  ElevatedButton(
-                    child: Text(id == null ? 'Add' : 'Update'),
-                    onPressed: () {
-                      if (_formKeyGuru.currentState!.validate()) {
-                        if (id == null) {
-                          _addGuru();
-                        } else {
-                          _updateGuru(id);
+                  SizedBox(
+                    width: 500,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Color(0xff6B6BA6),
+                        ),
+                      ),
+                      child: Text(
+                        id == null ? 'Add' : 'Update',
+                        style: TextStyle(
+                          color: Color(0xffFFFFFF),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKeyGuru.currentState!.validate()) {
+                          if (id == null) {
+                            _addGuru();
+                          } else {
+                            _updateGuru(id);
+                          }
+                          Navigator.of(context).pop();
                         }
-                        Navigator.of(context).pop();
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -274,6 +300,7 @@ class _TableguruState extends State<Tableguru> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
         title: Container(
           child: Row(
@@ -362,13 +389,15 @@ class _TableguruState extends State<Tableguru> {
                 children: _guru.map(
                   (guru) {
                     return Card(
+                      color: const Color(0xffF7F7F7),
+                      elevation: 6,
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
                         leading: guru['gambar_guru'] != null
                             ? Image.memory(
                                 base64Decode(guru['gambar_guru']),
-                                width: 40,
-                                height: 40,
+                                width: 50,
+                                height: 50,
                                 fit: BoxFit.cover,
                               )
                             : const Icon(Icons.person, size: 50),

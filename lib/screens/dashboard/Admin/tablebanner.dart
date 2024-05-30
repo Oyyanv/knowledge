@@ -44,15 +44,15 @@ class _BannerPageState extends State<BannerPage> {
     }
 
     showModalBottomSheet(
+      backgroundColor: Color(0xffFFFFFF),
       context: context,
-      isScrollControlled: true, // Menjadikan bottom sheet dapat digulir
+      isScrollControlled: true,
       elevation: 5,
       builder: (_) => Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom + 190,
         ),
         child: SingleChildScrollView(
-          // Menambahkan SingleChildScrollView agar konten dapat digulir
           child: Container(
             padding: const EdgeInsets.all(20.0),
             child: Form(
@@ -70,33 +70,51 @@ class _BannerPageState extends State<BannerPage> {
                     ),
                   const SizedBox(height: 20),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Expanded(
-                        flex: 2,
-                        child: Text('Image'),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: ElevatedButton(
-                          onPressed: _pickImage,
-                          child: const Text('Pick Image'),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Color(0xff6B6BA6),
+                          ),
+                        ),
+                        onPressed: _pickImage,
+                        child: const Text(
+                          'Pick Image',
+                          style: TextStyle(
+                            color: Color(0xffFFFFFF),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 50),
-                  ElevatedButton(
-                    child: Text(id == null ? 'Create' : 'Update'),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        if (id == null) {
-                          _addBanner();
-                        } else {
-                          _updateBanner(id);
+                  SizedBox(
+                    width: 500,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Color(0xff6B6BA6),
+                        ),
+                      ),
+                      child: Text(
+                        id == null ? 'Create' : 'Update',
+                        style: TextStyle(
+                          color: Color(0xffFFFFFF),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          if (id == null) {
+                            _addBanner();
+                          } else {
+                            _updateBanner(id);
+                          }
+                          Navigator.of(context).pop();
                         }
-                        Navigator.of(context).pop();
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -140,6 +158,7 @@ class _BannerPageState extends State<BannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -181,7 +200,7 @@ class _BannerPageState extends State<BannerPage> {
             Icons.arrow_back,
             color: Colors.white,
           ),
-           onPressed: () {
+          onPressed: () {
             Navigator.pop(
               context,
             );
@@ -226,12 +245,17 @@ class _BannerPageState extends State<BannerPage> {
                 itemCount: _banners.length,
                 itemBuilder: (context, index) {
                   return Card(
+                    color: const Color(0xffF7F7F7),
+                    elevation: 6,
                     margin: const EdgeInsets.all(10),
                     child: ListTile(
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text('Banner ${_banners[index]['id']}'),
+                          Divider(
+                            color: Colors.black,
+                          ),
                         ],
                       ),
                       subtitle: _banners[index]['gambar_banner'] != null

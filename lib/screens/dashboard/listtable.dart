@@ -9,6 +9,7 @@ class AdminTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xffFFFFFF),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,6 +29,8 @@ class AdminTable extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               children: [
                 Card(
+                  color: const Color(0xffF7F7F7),
+                  elevation: 6,
                   margin: const EdgeInsets.all(10),
                   child: GestureDetector(
                     onTap: () {
@@ -43,6 +46,8 @@ class AdminTable extends StatelessWidget {
                   ),
                 ),
                 Card(
+                  color: const Color(0xffF7F7F7),
+                  elevation: 6,
                   margin: const EdgeInsets.all(10),
                   child: GestureDetector(
                     onTap: () {
@@ -53,11 +58,13 @@ class AdminTable extends StatelessWidget {
                     },
                     child: const ListTile(
                       title: Text('Category List'),
-                      leading: Icon(Icons.book_rounded),
+                      leading: Icon(Icons.category),
                     ),
                   ),
                 ),
                 Card(
+                  color: const Color(0xffF7F7F7),
+                  elevation: 6,
                   margin: const EdgeInsets.all(10),
                   child: GestureDetector(
                     onTap: () {

@@ -66,6 +66,7 @@ class _TablekategoriState extends State<Tablekategori> {
     }
 
     showModalBottomSheet(
+      backgroundColor: Color(0xffFFFFFF),
       context: context,
       isScrollControlled: true,
       elevation: 5,
@@ -102,6 +103,7 @@ class _TablekategoriState extends State<Tablekategori> {
                   ),
                   SizedBox(height: 10),
                   DropdownButtonFormField<String>(
+                    dropdownColor: Color(0xffFFFFFF),
                     value: _selectkelas,
                     items: ['X', 'XI', 'XII']
                         .map((kelas) {
@@ -134,8 +136,18 @@ class _TablekategoriState extends State<Tablekategori> {
                   Row(
                     children: [
                       TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Color(0xff6B6BA6),
+                          ),
+                        ),
                         onPressed: _pilihgambar,
-                        child: Text('Upload Image'),
+                        child: Text(
+                          'Upload Image',
+                          style: TextStyle(
+                            color: Color(0xffFFFFFF),
+                          ),
+                        ),
                       ),
                       if (_gambar != null)
                         Image.file(
@@ -148,18 +160,32 @@ class _TablekategoriState extends State<Tablekategori> {
                     ],
                   ),
                   SizedBox(height: 50),
-                  ElevatedButton(
-                    child: Text(id == null ? 'Create' : 'Update'),
-                    onPressed: () {
-                      if (_formKeyKategori.currentState!.validate()) {
-                        if (id == null) {
-                          // _addKategoriMapel();
-                        } else {
-                          _updateKategoriMapel(id);
+                  SizedBox(
+                    width: 500,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Color(0xff6B6BA6),
+                        ),
+                      ),
+                      child: Text(
+                        id == null ? 'Create' : 'Update',
+                        style: TextStyle(
+                          color: Color(0xffFFFFFF),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKeyKategori.currentState!.validate()) {
+                          if (id == null) {
+                            // _addKategoriMapel();
+                          } else {
+                            _updateKategoriMapel(id);
+                          }
+                          Navigator.of(context).pop();
                         }
-                        Navigator.of(context).pop();
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -230,6 +256,7 @@ class _TablekategoriState extends State<Tablekategori> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -304,6 +331,8 @@ class _TablekategoriState extends State<Tablekategori> {
                 children: _kategori.map(
                   (kategori) {
                     return Card(
+                      color: const Color(0xffF7F7F7),
+                      elevation: 6,
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
                         leading: kategori['gambar'] != null

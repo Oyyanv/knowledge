@@ -20,7 +20,7 @@ class DBHelper {
     String path = join(await getDatabasesPath(), 'crud.db');
     return await openDatabase(
       path,
-      version: 5, //versi database sudah ke 5
+      version: 6, //versi database sudah ke 6
       //table pertamakali dibikin
       onCreate: (db, version) async {
         await db.execute("CREATE TABLE kategori_mapel("
@@ -34,6 +34,7 @@ class DBHelper {
             "mapel TEXT, "
             "kelas TEXT, "
             "gambar TEXT, "
+            "nama_guru TEXT, "
             "harga TEXT, "
             "id_guru INTEGER, "
             "FOREIGN KEY(id_kategori) REFERENCES kategori_mapel(id_kategori), "
@@ -97,6 +98,12 @@ class DBHelper {
           await db.execute("CREATE TABLE banner("
               "id INTEGER PRIMARY KEY AUTOINCREMENT, "
               "gambar_banner TEXT)");
+        }
+        if (oldVersion < 6) {
+          //update table versi db 6
+          //penambahan field untuk mapel
+          //perubahan = + nama_guru
+          await db.execute("ALTER TABLE mapel ADD COLUMN nama_guru TEXT");
         }
       },
     );

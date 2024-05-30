@@ -28,12 +28,15 @@ class _LessonPageState extends State<LessonPage> {
   final _namamapel = TextEditingController();
   final _kelas = TextEditingController();
   final _inputgambar = TextEditingController();
+  // final _namaGuru = TextEditingController();
   //kategori
   String? _selectedmapel;
   String? _selectedkelas;
+  String? _selectedguru;
   //array data
   List<Map<String, dynamic>> _mapel = [];
   List<Map<String, dynamic>> _kategori = [];
+  List<Map<String, dynamic>> _guru = [];
   //coba upload gambar #1
   File? _gambar;
   Future _pilihgambar() async {
@@ -51,12 +54,20 @@ class _LessonPageState extends State<LessonPage> {
     //memperbarui data tampilan terbaru
     _refreshMapel();
     _refreshKategori();
+    _refreshGuru();
   }
 
   void _refreshMapel() async {
     final data = await dbHelper.queryAllMapel();
     setState(() {
       _mapel = data;
+    });
+  }
+
+  void _refreshGuru() async {
+    final data = await dbHelper.queryAllGuru();
+    setState(() {
+      _guru = data;
     });
   }
 
@@ -72,7 +83,7 @@ class _LessonPageState extends State<LessonPage> {
     if (id != null) {
       final existingMapel = _mapel.firstWhere((element) => element['id'] == id);
       _mapelController.text = existingMapel['mapel'];
-      _kategorikelasController.text = existingMapel['kategorikelas'];
+      _kategorikelasController.text = existingMapel['kelas'];
       _hargaController.text = existingMapel['harga'];
     } else {
       _mapelController.clear();
@@ -81,6 +92,7 @@ class _LessonPageState extends State<LessonPage> {
     }
 
     showModalBottomSheet(
+      backgroundColor: Color(0xffFFFFFF),
       context: context,
       isScrollControlled: true,
       elevation: 5,
@@ -110,6 +122,7 @@ class _LessonPageState extends State<LessonPage> {
                   _kategori == null
                       ? CircularProgressIndicator()
                       : DropdownButtonFormField<String>(
+                          dropdownColor: Color(0xffFFFFFF),
                           value: _selectedmapel,
                           items: _kategori.map((kategori) {
                             return DropdownMenuItem<String>(
@@ -139,6 +152,7 @@ class _LessonPageState extends State<LessonPage> {
                   _kategori == null //jadi kalo gaada kategorinya dia gak muncul
                       ? CircularProgressIndicator() //berhubungan sama yg tadi itu, jadi fungsinya ini buat loading screen untuk jalanin mencari data dari tabel kategori
                       : DropdownButtonFormField<String>(
+                          dropdownColor: Color(0xffFFFFFF),
                           value: _selectedkelas,
                           items: ['X', 'XI', 'XII'].map((kelas) {
                             return DropdownMenuItem<String>(
@@ -162,6 +176,36 @@ class _LessonPageState extends State<LessonPage> {
                             return null;
                           },
                         ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  _guru == null
+                      ? CircularProgressIndicator()
+                      : DropdownButtonFormField<String>(
+                          dropdownColor: Color(0xffFFFFFF),
+                          value: _selectedguru,
+                          items: _guru.map((guru) {
+                            return DropdownMenuItem<String>(
+                              value: guru['id'].toString(),
+                              child: Text(guru['nama']),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedguru = newValue!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Choose Teacher',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Require Teacher';
+                            }
+                            return null;
+                          },
+                        ),
                   TextFormField(
                     controller: _hargaController,
                     keyboardType: TextInputType.number,
@@ -171,6 +215,37 @@ class _LessonPageState extends State<LessonPage> {
                     ],
                     decoration: InputDecoration(
                       labelText: 'Price',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Require Price';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 50),
+                  SizedBox(
+                    height: 50,
+                    width: 500,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(Color(0xff6B6BA6)),
+                      ),
+                      child: Text(
+                        id == null ? 'Create' : 'Update',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        if (_formKeySubject.currentState!.validate()) {
+                          if (id == null) {
+                            _addMapel();
+                          } else {
+                            _updateMapel(id);
+                          }
+                          Navigator.of(context).pop();
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -196,6 +271,7 @@ class _LessonPageState extends State<LessonPage> {
     }
 
     showModalBottomSheet(
+      backgroundColor: Color(0xffFFFFFF),
       context: context,
       isScrollControlled: true,
       elevation: 5,
@@ -232,6 +308,7 @@ class _LessonPageState extends State<LessonPage> {
                   ),
                   SizedBox(height: 10),
                   DropdownButtonFormField<String>(
+                    dropdownColor: Color(0xffFFFFFF),
                     value: _kelas.text.isNotEmpty ? _kelas.text : null,
                     items: ['X', 'XI', 'XII']
                         .map((kelas) {
@@ -258,12 +335,24 @@ class _LessonPageState extends State<LessonPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 15,),
+                  SizedBox(
+                    height: 15,
+                  ),
                   Row(
                     children: [
                       TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Color(0xff6B6BA6),
+                          ),
+                        ),
                         onPressed: _pilihgambar,
-                        child: Text('Upload Image'),
+                        child: Text(
+                          'Upload Image',
+                          style: TextStyle(
+                            color: Color(0xffFFFFFF),
+                          ),
+                        ),
                       ),
                       if (_gambar != null)
                         Image.file(
@@ -276,18 +365,29 @@ class _LessonPageState extends State<LessonPage> {
                     ],
                   ),
                   SizedBox(height: 50),
-                  ElevatedButton(
-                    child: Text(id == null ? 'Create' : 'Update'),
-                    onPressed: () {
-                      if (_formKeyCategory.currentState!.validate()) {
-                        if (id == null) {
-                          _addKategoriMapel();
-                        } else {
-                          _updateKategoriMapel(id);
+                  SizedBox(
+                    height: 50,
+                    width: 500,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(Color(0xff6B6BA6)),
+                      ),
+                      child: Text(
+                        id == null ? 'Create' : 'Update',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        if (_formKeyCategory.currentState!.validate()) {
+                          if (id == null) {
+                            _addKategoriMapel();
+                          } else {
+                            _updateKategoriMapel(id);
+                          }
+                          Navigator.of(context).pop();
                         }
-                        Navigator.of(context).pop();
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -299,20 +399,82 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _addMapel() async {
+    // Periksa apakah nilai yang dipilih dari dropdown tidak kosong
+    if (_selectedmapel == null ||
+        _selectedkelas == null ||
+        _selectedguru == null) {
+      // Tampilkan pesan atau lakukan tindakan yang sesuai jika salah satu nilai kosong
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select all fields')),
+      );
+      return; // Hentikan proses jika salah satu nilai kosong
+    }
+
+    // Periksa apakah harga tidak kosong dan valid
+    if (_hargaController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter the price')),
+      );
+      return;
+    }
+
+    // Dapatkan data subjek dan kelas dari tabel kategori
+    final selectedKategori = _kategori.firstWhere(
+      (kategori) => kategori['id_kategori'].toString() == _selectedmapel,
+      orElse: () => {'id_kategori': -1},
+    );
+
+    final selectedMapel = selectedKategori['nama_mapel'];
+    final selectedKelas = selectedKategori['kelas'];
+    final selectedGambar = selectedKategori['gambar'];
+
+    // Dapatkan nama guru dari tabel guru
+    final selectedGuru = _guru.firstWhere(
+      (guru) => guru['id'].toString() == _selectedguru,
+      orElse: () => {'id': -1},
+    );
+
+    final namaGuru = selectedGuru['nama'];
+
+    // Insert data ke database
     await dbHelper.insertMapel({
-      'mapel': _mapelController.text,
-      'kategorikelas': _kategorikelasController.text,
+      'mapel': selectedMapel,
+      'kelas': selectedKelas,
+      'nama_guru': namaGuru,
       'harga': _hargaController.text,
+      'gambar': selectedGambar,
     });
+
+    // Perbarui tampilan dengan data terbaru
     _refreshMapel();
   }
 
   Future<void> _updateMapel(int id) async {
+    // Dapatkan data subjek dan kelas dari tabel kategori
+    final selectedKategori = _kategori.firstWhere(
+      (kategori) => kategori['id_kategori'] == int.parse(_selectedmapel!),
+      orElse: () => {'id_kategori': -1},
+    );
+
+    final selectedMapel = selectedKategori['nama_mapel'];
+    final selectedKelas = selectedKategori['kelas'];
+    final selectedGambar = selectedKategori['gambar'];
+
+    // Dapatkan nama guru dari tabel guru
+    final selectedGuru = _guru.firstWhere(
+      (guru) => guru['id'].toString() == _selectedguru,
+      orElse: () => {'id': -1},
+    );
+
+    final namaGuru = selectedGuru['nama'];
+
     await dbHelper.updateMapel({
       'id': id,
-      'mapel': _mapelController.text,
-      'kategorikelas': _kategorikelasController.text,
+      'mapel': selectedMapel,
+      'kelas': selectedKelas,
+      'nama_guru': namaGuru,
       'harga': _hargaController.text,
+      'gambar': selectedGambar,
     });
     _refreshMapel();
   }
@@ -337,8 +499,7 @@ class _LessonPageState extends State<LessonPage> {
       if (sameMapelExists) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                'Category already exists in the database'),
+            content: Text('Category already exists in the database'),
           ),
         );
         return; // Hentikan proses penambahan data baru
@@ -434,6 +595,7 @@ class _LessonPageState extends State<LessonPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFFFFFF),
       body: Column(
         children: [
           Row(
@@ -481,6 +643,7 @@ class _LessonPageState extends State<LessonPage> {
                   padding:
                       EdgeInsets.symmetric(horizontal: 15), // jarak didalam
                   child: DropdownButton<String>(
+                    dropdownColor: Color(0xffFFFFFF),
                     value: _selectedmapel,
                     items: _kategori.map((kategori) {
                       return DropdownMenuItem<String>(
@@ -513,6 +676,7 @@ class _LessonPageState extends State<LessonPage> {
                   ), // jarak halaman
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: DropdownButton<String>(
+                    dropdownColor: Color(0xffFFFFFF),
                     value: _selectedkelas,
                     items: ['X', 'XI', 'XII'].map((kelas) {
                       return DropdownMenuItem<String>(
@@ -567,10 +731,26 @@ class _LessonPageState extends State<LessonPage> {
                 children: _mapel.map(
                   (mapel) {
                     return Card(
+                      color: Color(0xffF7F7F7),
+                      elevation: 6,
                       margin: const EdgeInsets.all(15),
                       child: ListTile(
+                        leading: mapel['gambar'] != null
+                            ? Image.memory(
+                                base64Decode(mapel['gambar']),
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              )
+                            : const Icon(Icons.book, size: 50),
                         title: Text(mapel['mapel']),
-                        subtitle: Text(mapel['kategorikelas']),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(mapel['kelas']),
+                            Text(mapel['nama_guru']),
+                          ],
+                        ),
                         trailing: SizedBox(
                           width: 100,
                           child: Row(

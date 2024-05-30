@@ -244,13 +244,24 @@ class _LoginPageState extends State<LoginPage> {
                           SizedBox(
                             height: 20,
                           ),
-                          Center(
+                          InkWell(
+                            onTap: () {
+                             
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return MyHomePage();
+                                  },
+                                ),
+                              );
+                            },
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 20),
                               width: double.infinity,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [
+                                  colors: const [
                                     Color(0xff6B6BA6),
                                     Color(0xff6579C1),
                                     Color(0xff404080)
@@ -258,24 +269,13 @@ class _LoginPageState extends State<LoginPage> {
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                 ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(30),
-                                ),
+                                borderRadius: BorderRadius.circular(30),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   TextButton(
-                                    onPressed: () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return MyHomePage();
-                                          },
-                                        ),
-                                      );
-                                    },
+                                    onPressed: () {},
                                     child: Text(
                                       'Sign In',
                                       style: TextStyle(

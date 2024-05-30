@@ -98,6 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xffFFFFFF),
+        elevation: 8,
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -130,7 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
         unselectedItemColor: Colors.grey,
         selectedItemColor: const Color.fromARGB(255, 158, 135, 228),
         onTap: _onTimeTapped,
-        elevation: 0,
       ),
     );
   }
