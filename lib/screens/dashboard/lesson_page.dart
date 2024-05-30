@@ -593,13 +593,13 @@ class _LessonPageState extends State<LessonPage> {
   }
   //nge filter mapelnya
   List<Map<String, dynamic>> _filteredMapel() {
-   
+    //nyari di kategori
     final selectedCategory = _kategori.firstWhere(
       (kategori) => kategori['id_kategori'].toString() == _selectedmapel,
       orElse: () => {'nama_mapel': '', 'kelas': ''},
     );
 
-  
+    //trus di cocokin ke table mapel
     return _mapel.where((mapel) {
       return mapel['mapel'] == selectedCategory['nama_mapel'] &&
           mapel['kelas'] == selectedCategory['kelas'];
