@@ -592,6 +592,20 @@ class _LessonPageState extends State<LessonPage> {
     _refreshKategori();
   }
 
+  List<Map<String, dynamic>> _filteredMapel() {
+   
+    final selectedCategory = _kategori.firstWhere(
+      (kategori) => kategori['id_kategori'].toString() == _selectedmapel,
+      orElse: () => {'nama_mapel': '', 'kelas': ''},
+    );
+
+  
+    return _mapel.where((mapel) {
+      return mapel['mapel'] == selectedCategory['nama_mapel'] &&
+          mapel['kelas'] == selectedCategory['kelas'];
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -651,9 +665,12 @@ class _LessonPageState extends State<LessonPage> {
                         child: Text(kategori['nama_mapel']),
                       );
                     }).toList(),
+                    // Panggil fungsi tersebut setiap kali terjadi perubahan pada pilihan kategori
                     onChanged: (newValue) {
                       setState(() {
                         _selectedmapel = newValue!;
+                        _filteredMapel();
+                        _refreshMapel();
                       });
                     },
                     hint: Text('Choose Subject'),
@@ -687,6 +704,8 @@ class _LessonPageState extends State<LessonPage> {
                     onChanged: (newValue) {
                       setState(() {
                         _selectedkelas = newValue!;
+                        _refreshMapel();
+                        _filteredMapel();
                       });
                     },
                     hint: Text('Choose Class'),
@@ -725,10 +744,10 @@ class _LessonPageState extends State<LessonPage> {
             ],
           ),
           Visibility(
-            visible: _mapel.isNotEmpty,
+            visible: _filteredMapel().isNotEmpty,
             child: Expanded(
               child: ListView(
-                children: _mapel.map(
+                children: _filteredMapel().map(
                   (mapel) {
                     return Card(
                       color: Color(0xffF7F7F7),
