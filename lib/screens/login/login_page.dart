@@ -246,7 +246,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           InkWell(
                             onTap: () {
-                             
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -275,7 +274,16 @@ class _LoginPageState extends State<LoginPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return MyHomePage();
+                                          },
+                                        ),
+                                      );
+                                    },
                                     child: Text(
                                       'Sign In',
                                       style: TextStyle(

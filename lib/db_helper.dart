@@ -20,7 +20,7 @@ class DBHelper {
     String path = join(await getDatabasesPath(), 'crud.db');
     return await openDatabase(
       path,
-      version: 6, //versi database sudah ke 6
+      version: 7, //versi database sudah ke 7
       //table pertamakali dibikin
       onCreate: (db, version) async {
         await db.execute("CREATE TABLE kategori_mapel("
@@ -49,6 +49,12 @@ class DBHelper {
         await db.execute("CREATE TABLE banner("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "gambar_banner TEXT)");
+        await db.execute("CREATE TABLE pengajuan("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "id_user TEXT, "
+            "platform_meeting TEXT,"
+            "tgl_pengajuan TEXT,"
+            "FOREIGN KEY(id) REFERENCES mapel(id))");
       },
       //onupgrade tablenya itu berarti ada yg di ubah fieldnya atau ada yg nambah table baru
       onUpgrade: (db, oldVersion, newVersion) async {
@@ -104,6 +110,16 @@ class DBHelper {
           //penambahan field untuk mapel
           //perubahan = + nama_guru
           await db.execute("ALTER TABLE mapel ADD COLUMN nama_guru TEXT");
+        }
+        if (oldVersion < 7) {
+          //update table db vsersi 7
+          //penambahan table
+          await db.execute("CREATE TABLE pengajuan("
+              "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+              "id_user TEXT, "
+              "platform_meeting TEXT,"
+              "tgl_pengajuan TEXT,"
+              "FOREIGN KEY(id) REFERENCES mapel(id))");
         }
       },
     );

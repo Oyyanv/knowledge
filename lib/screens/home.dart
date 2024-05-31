@@ -117,11 +117,11 @@ class _MyHomePageState extends State<MyHomePage> {
             label: "",
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: "",
-            backgroundColor: Color.fromARGB(255, 255, 255, 255),
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.notifications),
+          //   label: "",
+          //   backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "",

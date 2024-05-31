@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:knowledge/db_helper.dart';
 import 'package:knowledge/formatuang.dart';
+import 'package:knowledge/screens/dashboard/detailMapel/detailmapel_page.dart';
 
 class LessonPage extends StatefulWidget {
   const LessonPage({Key? key}) : super(key: key);
@@ -591,6 +592,7 @@ class _LessonPageState extends State<LessonPage> {
         .showSnackBar(const SnackBar(content: Text('Category deleted')));
     _refreshKategori();
   }
+
   //nge filter mapelnya
   List<Map<String, dynamic>> _filteredMapel() {
     //nyari di kategori
@@ -750,43 +752,50 @@ class _LessonPageState extends State<LessonPage> {
                 children: _filteredMapel().map(
                   (mapel) {
                     return Card(
-                      color: Color(0xffF7F7F7),
-                      elevation: 6,
-                      margin: const EdgeInsets.all(15),
-                      child: ListTile(
-                        leading: mapel['gambar'] != null
-                            ? Image.memory(
-                                base64Decode(mapel['gambar']),
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              )
-                            : const Icon(Icons.book, size: 50),
-                        title: Text(mapel['mapel']),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(mapel['kelas']),
-                            Text(mapel['nama_guru']),
-                          ],
-                        ),
-                        trailing: SizedBox(
-                          width: 100,
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () => _showForm(mapel['id']),
+                        color: Color(0xffF7F7F7),
+                        elevation: 6,
+                        margin: const EdgeInsets.all(15),
+                        child: GestureDetector(
+                          onTap: () {
+                             Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return DetailmapelPage();
+                      }));
+                          },
+                          child: ListTile(
+                            leading: mapel['gambar'] != null
+                                ? Image.memory(
+                                    base64Decode(mapel['gambar']),
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  )
+                                : const Icon(Icons.book, size: 50),
+                            title: Text(mapel['mapel']),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(mapel['kelas']),
+                                Text(mapel['nama_guru']),
+                              ],
+                            ),
+                            trailing: SizedBox(
+                              width: 100,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () => _showForm(mapel['id']),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () => _deleteMapel(mapel['id']),
+                                  ),
+                                ],
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () => _deleteMapel(mapel['id']),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    );
+                        ));
                   },
                 ).toList(),
               ),
