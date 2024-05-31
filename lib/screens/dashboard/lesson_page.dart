@@ -753,14 +753,21 @@ class _LessonPageState extends State<LessonPage> {
                   (mapel) {
                     return Card(
                         color: Color(0xffF7F7F7),
-                        elevation: 6,
+                        elevation: 8,
                         margin: const EdgeInsets.all(15),
                         child: GestureDetector(
                           onTap: () {
-                             Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return DetailmapelPage();
-                      }));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailmapelPage(
+                                    namamapel: mapel['mapel'],
+                                    namaguru: mapel['nama_guru'],
+                                    kelas: mapel['kelas'],
+                                    harga: mapel['harga'],
+                                    gambar: mapel['gambar'],
+                                  ),
+                                ));
                           },
                           child: ListTile(
                             leading: mapel['gambar'] != null

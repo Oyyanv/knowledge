@@ -160,22 +160,25 @@ class _BannerPageState extends State<BannerPage> {
     return Scaffold(
       backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              'lib/assets/images/logonnew.png',
-              width: 34,
-              height: 34,
-            ),
-            const Text(
-              ' Knowledge',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF404080),
+        title: Container(
+          margin: const EdgeInsets.only(right: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                'lib/assets/images/logonnew.png',
+                width: 34,
+                height: 34,
               ),
-            ),
-          ],
+              const Text(
+                ' Knowledge',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF404080),
+                ),
+              ),
+            ],
+          ),
         ),
         actions: <Widget>[
           IconButton(
@@ -193,7 +196,7 @@ class _BannerPageState extends State<BannerPage> {
                 Color(0xFFCCD4F0),
                 Color(0xFFA4B6E1),
                 Color(0xFF9BAAD2)
-              ])),
+              ],),),
         ),
         leading: IconButton(
           icon: const Icon(

@@ -303,6 +303,7 @@ class _TableguruState extends State<Tableguru> {
       backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
         title: Container(
+          margin: EdgeInsets.only(right: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -396,8 +397,8 @@ class _TableguruState extends State<Tableguru> {
                         leading: guru['gambar_guru'] != null
                             ? Image.memory(
                                 base64Decode(guru['gambar_guru']),
-                                width: 50,
-                                height: 50,
+                                width: 40,
+                                height: 40,
                                 fit: BoxFit.cover,
                               )
                             : const Icon(Icons.person, size: 50),
