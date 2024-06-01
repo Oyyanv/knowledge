@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:knowledge/screens/dashboard/home_page.dart';
 import 'package:knowledge/screens/dashboard/lesson_page.dart';
 import 'package:knowledge/screens/dashboard/listtable.dart';
-import 'package:knowledge/screens/dashboard/notification_page.dart';
+// import 'package:knowledge/screens/dashboard/notification_page.dart';
 import 'package:knowledge/screens/dashboard/profile_page.dart';
+import 'package:knowledge/screens/login/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,18 +35,78 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //alert logout
+  Future<void> showLogoutDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user harus menutup dialog secara eksplisit
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xffFFFFFF),
+          title: const Text('Logout'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to logout?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Tombol untuk menutup dialog dan kembali ke halaman sebelumnya
+                Navigator.of(context).pop();
+                setState(() {
+                  _selectedIndex = _previousIndex;
+                });
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Tombol untuk logout dan pindah ke halaman login
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const LoginPage();
+                    },
+                  ),
+                );
+              },
+              child: const Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   int _selectedIndex = 0;
+  int _previousIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     LessonPage(),
     AdminTable(),
-    NotificationPage(),
     ProfilePage(),
   ];
 
   void _onTimeTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (index == _widgetOptions.length - 1) {
+        // Menyimpan indeks sebelumnya sebelum menampilkan dialog
+        _previousIndex = _selectedIndex;
+        // Menampilkan dialog ketika tombol Logout ditekan
+        showLogoutDialog(context);
+      } else {
+        // Menavigasi ke halaman terkait jika tidak ada dialog logout yang ditampilkan
+        _selectedIndex = index;
+      }
     });
   }
 
@@ -123,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //   backgroundColor: Color.fromARGB(255, 255, 255, 255),
           // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.logout),
             label: "",
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
           ),

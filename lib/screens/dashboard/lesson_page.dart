@@ -598,13 +598,12 @@ class _LessonPageState extends State<LessonPage> {
     //nyari di kategori
     final selectedCategory = _kategori.firstWhere(
       (kategori) => kategori['id_kategori'].toString() == _selectedmapel,
-      orElse: () => {'nama_mapel': '', 'kelas': ''},
+      orElse: () => {'nama_mapel': ''},
     );
 
     //trus di cocokin ke table mapel
     return _mapel.where((mapel) {
-      return mapel['mapel'] == selectedCategory['nama_mapel'] &&
-          mapel['kelas'] == selectedCategory['kelas'];
+      return mapel['mapel'] == selectedCategory['nama_mapel'];
     }).toList();
   }
 
@@ -630,12 +629,27 @@ class _LessonPageState extends State<LessonPage> {
               ),
               Container(
                 margin: EdgeInsets.only(right: 10),
-                child: TextButton(
-                  onPressed: () => _showFormKategori(null),
-                  child: Icon(
-                    Icons.add,
-                    color: Color(0xff4B4949),
-                  ),
+                child: Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedmapel = null;
+                        });
+                      },
+                      child: Icon(
+                        Icons.refresh,
+                        color: Color(0xff4B4949),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => _showFormKategori(null),
+                      child: Icon(
+                        Icons.add,
+                        color: Color(0xff4B4949),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -746,68 +760,133 @@ class _LessonPageState extends State<LessonPage> {
             ],
           ),
           Visibility(
-            visible: _filteredMapel().isNotEmpty,
+            visible: _selectedmapel != null,
+            replacement: Expanded(
+              child: ListView(
+                children: _mapel.map(
+                  (mapel) {
+                    return Card(
+                      color: Color(0xffF7F7F7),
+                      elevation: 8,
+                      margin: const EdgeInsets.all(15),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailmapelPage(
+                                namamapel: mapel['mapel'],
+                                namaguru: mapel['nama_guru'],
+                                kelas: mapel['kelas'],
+                                harga: mapel['harga'],
+                                gambar: mapel['gambar'],
+                              ),
+                            ),
+                          );
+                        },
+                        child: ListTile(
+                          leading: mapel['gambar'] != null
+                              ? Image.memory(
+                                  base64Decode(mapel['gambar']),
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                )
+                              : const Icon(Icons.book, size: 50),
+                          title: Text(mapel['mapel']),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Kelas : ${mapel['kelas']}'),
+                              Text('Teacher : ${mapel['nama_guru']}'),
+                            ],
+                          ),
+                          trailing: SizedBox(
+                            width: 100,
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () => _showForm(mapel['id']),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () => _deleteMapel(mapel['id']),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
             child: Expanded(
               child: ListView(
                 children: _filteredMapel().map(
                   (mapel) {
                     return Card(
-                        color: Color(0xffF7F7F7),
-                        elevation: 8,
-                        margin: const EdgeInsets.all(15),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailmapelPage(
-                                    namamapel: mapel['mapel'],
-                                    namaguru: mapel['nama_guru'],
-                                    kelas: mapel['kelas'],
-                                    harga: mapel['harga'],
-                                    gambar: mapel['gambar'],
-                                  ),
-                                ));
-                          },
-                          child: ListTile(
-                            leading: mapel['gambar'] != null
-                                ? Image.memory(
-                                    base64Decode(mapel['gambar']),
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  )
-                                : const Icon(Icons.book, size: 50),
-                            title: Text(mapel['mapel']),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(mapel['kelas']),
-                                Text(mapel['nama_guru']),
-                              ],
-                            ),
-                            trailing: SizedBox(
-                              width: 100,
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    onPressed: () => _showForm(mapel['id']),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete),
-                                    onPressed: () => _deleteMapel(mapel['id']),
-                                  ),
-                                ],
+                      color: Color(0xffF7F7F7),
+                      elevation: 8,
+                      margin: const EdgeInsets.all(15),
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigasi ke halaman detail mapel
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailmapelPage(
+                                namamapel: mapel['mapel'],
+                                namaguru: mapel['nama_guru'],
+                                kelas: mapel['kelas'],
+                                harga: mapel['harga'],
+                                gambar: mapel['gambar'],
                               ),
                             ),
+                          );
+                        },
+                        child: ListTile(
+                          leading: mapel['gambar'] != null
+                              ? Image.memory(
+                                  base64Decode(mapel['gambar']),
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                )
+                              : const Icon(Icons.book, size: 50),
+                          title: Text(mapel['mapel']),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Kelas : ${mapel['kelas']}'),
+                              Text('Teacher : ${mapel['nama_guru']}'),
+                            ],
                           ),
-                        ));
+                          trailing: SizedBox(
+                            width: 100,
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () => _showForm(mapel['id']),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () => _deleteMapel(mapel['id']),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
                   },
                 ).toList(),
               ),
             ),
-          ),
+          )
         ],
       ),
     );

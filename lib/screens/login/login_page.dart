@@ -181,6 +181,12 @@ class _LoginPageState extends State<LoginPage> {
                                     EdgeInsets.symmetric(horizontal: 20),
                                 hintText: 'Username',
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Require Username';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           SizedBox(
@@ -219,6 +225,12 @@ class _LoginPageState extends State<LoginPage> {
                                     EdgeInsets.symmetric(horizontal: 20),
                                 hintText: 'Password',
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Require Password';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           SizedBox(
@@ -246,14 +258,16 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           InkWell(
                             onTap: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return MyHomePage();
-                                  },
-                                ),
-                              );
+                              if (_loginKey.currentState!.validate()) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return MyHomePage();
+                                    },
+                                  ),
+                                );
+                              }
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 20),

@@ -198,31 +198,11 @@ class _TablekategoriState extends State<Tablekategori> {
 
   Future<void> _updateKategoriMapel(int id) async {
     // Cek apakah ada kategori dengan kelas yang sama kecuali untuk entri yang sedang diperbarui
-    final existingKategori = _kategori.firstWhere(
+    _kategori.firstWhere(
       (kategori) =>
           kategori['kelas'] == _kelas.text && kategori['id_kategori'] != id,
       orElse: () => {'kategori_mapel': -1},
     );
-
-    // Jika kategori dengan kelas yang sama ditemukan
-    if (existingKategori != {'kategori_mapel': -1}) {
-      // Cek apakah nama mapel sama dengan yang sudah ada
-      final sameMapelExists = _kategori.any(
-        (kategori) =>
-            kategori['nama_mapel'] == _namamapel.text &&
-            kategori['kelas'] == _kelas.text,
-      );
-
-      // Jika nama mapel juga sama, tampilkan Snackbar
-      if (sameMapelExists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Category already exists in the database'),
-          ),
-        );
-        return; // Hentikan proses pembaruan data
-      }
-    }
 
     // Jika tidak ada kategori dengan kelas yang sama atau nama mapel berbeda, lakukan pembaruan data
     if (_gambar != null) {
@@ -287,14 +267,16 @@ class _TablekategoriState extends State<Tablekategori> {
         ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: <Color>[
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: <Color>[
                 Color(0xFFCCD4F0),
                 Color(0xFFA4B6E1),
                 Color(0xFF9BAAD2)
-              ],),),
+              ],
+            ),
+          ),
         ),
         leading: IconButton(
           icon: const Icon(
