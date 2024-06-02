@@ -239,7 +239,7 @@ class _TablekategoriState extends State<Tablekategori> {
       backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
         title: Container(
-          margin: const EdgeInsets.only(right: 10),
+          margin: const EdgeInsets.only(right: 64),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -258,13 +258,6 @@ class _TablekategoriState extends State<Tablekategori> {
             ],
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-            color: Colors.white,
-          )
-        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

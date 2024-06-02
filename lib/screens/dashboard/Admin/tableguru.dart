@@ -303,7 +303,7 @@ class _TableguruState extends State<Tableguru> {
       backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
         title: Container(
-          margin: EdgeInsets.only(right: 10),
+          margin: const EdgeInsets.only(right: 64),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -322,23 +322,18 @@ class _TableguruState extends State<Tableguru> {
             ],
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-            color: Colors.white,
-          )
-        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: <Color>[
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: <Color>[
                 Color(0xFFCCD4F0),
                 Color(0xFFA4B6E1),
                 Color(0xFF9BAAD2)
-              ])),
+              ],
+            ),
+          ),
         ),
         leading: IconButton(
           icon: const Icon(

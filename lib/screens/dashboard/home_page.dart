@@ -1,11 +1,10 @@
-// ignore_for_file: sort_child_properties_last
-
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:knowledge/db_helper.dart';
+import 'package:knowledge/screens/dashboard/lesson_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -104,22 +103,27 @@ class _HomePageState extends State<HomePage> {
                     itemCount: _kategori.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
-                      return Container(
-                        width: 80,
-                        height: 80,
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Image.memory(
-                          base64Decode(_kategori[index]['gambar']),
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.cover,
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => LessonPage()));
+                        },
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Image.memory(
+                            base64Decode(_kategori[index]['gambar']),
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       );
                     },

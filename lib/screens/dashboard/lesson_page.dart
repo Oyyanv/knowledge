@@ -635,6 +635,7 @@ class _LessonPageState extends State<LessonPage> {
                       onPressed: () {
                         setState(() {
                           _selectedmapel = null;
+                          _selectedkelas = null;
                         });
                       },
                       child: Icon(

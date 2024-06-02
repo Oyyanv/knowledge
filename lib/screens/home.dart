@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_unnecessary_containers
+// ignore_for_file: avoid_unnecessary_containers, unnecessary_this, prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:knowledge/screens/dashboard/home_page.dart';
 import 'package:knowledge/screens/dashboard/lesson_page.dart';
@@ -110,6 +110,31 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  //icon search
+  Icon iconsearch = Icon(Icons.search);
+  //judul text
+  Widget cusSearchBar = Container(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const Padding(
+          padding: EdgeInsets.only(left: 40),
+        ),
+        Image.asset(
+          'lib/assets/images/logonnew.png',
+          width: 34,
+          height: 34,
+        ),
+        const Text(
+          ' Knowledge',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF404080),
+          ),
+        ),
+      ],
+    ),
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,9 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.only(left: 40),
-              ),
+            
               Image.asset(
                 'lib/assets/images/logonnew.png',
                 width: 34,
@@ -136,13 +159,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-            color: Colors.white,
-          )
-        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient: LinearGradient(
