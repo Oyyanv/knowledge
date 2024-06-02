@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:knowledge/db_helper.dart';
-import 'package:knowledge/screens/dashboard/lesson_page.dart';
+// import 'package:knowledge/screens/dashboard/lesson_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -59,6 +59,10 @@ class _HomePageState extends State<HomePage> {
             ImageSlideshow(
               width: double.infinity,
               height: 180,
+              isLoop: true,
+              autoPlayInterval: 2500,
+              indicatorBackgroundColor: Colors.transparent,
+              indicatorColor: Colors.transparent,
               children: _banner.map((banner) {
                 Uint8List? imageBytes = banner['gambar_banner'];
                 if (imageBytes != null) {
@@ -73,10 +77,6 @@ class _HomePageState extends State<HomePage> {
                   return Container();
                 }
               }).toList(),
-              isLoop: true,
-              autoPlayInterval: 2500,
-              indicatorBackgroundColor: Colors.transparent,
-              indicatorColor: Colors.transparent,
             ),
           const SizedBox(
             height: 10,
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
               const Padding(
                 padding: EdgeInsets.all(15),
                 child: Text(
-                  'Category List',
+                  'Subject List',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -104,9 +104,9 @@ class _HomePageState extends State<HomePage> {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => LessonPage()));
-                        },
+                        // onTap: () {
+                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => LessonPage()));
+                        // },
                         child: Container(
                           width: 80,
                           height: 80,
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: EdgeInsets.all(15),
                 child: Text(
-                  'Best Teacher!',
+                  'Recommended Teacher',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
