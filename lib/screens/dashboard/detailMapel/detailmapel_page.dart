@@ -1,3 +1,7 @@
+// ignore_for_file: unnecessary_string_interpolations
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class DetailmapelPage extends StatelessWidget {
@@ -19,10 +23,10 @@ class DetailmapelPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFFFFFF),
+      backgroundColor: const Color(0xffFFFFFF),
       appBar: AppBar(
         title: Container(
-          margin: const EdgeInsets.only(right: 10),
+          margin: const EdgeInsets.only(right: 64),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -41,13 +45,6 @@ class DetailmapelPage extends StatelessWidget {
             ],
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-            color: Colors.white,
-          )
-        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -74,7 +71,49 @@ class DetailmapelPage extends StatelessWidget {
         ),
       ),
       body: Column(
-        children: [Text('$namamapel')],
+        children: [
+          Image.memory(
+            base64Decode(gambar!),
+            width: double.infinity,
+            height: 300,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Container(
+            color: Colors.grey[200],
+            height: 350,
+            width: double.infinity,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 45,
+                    ),
+                    Text(
+                      '$namamapel',
+                      style: const TextStyle(
+                          color: Color(0xFF404080),
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('Grade : $kelas'),
+                    Text('Teacher : $namaguru'),
+                    Text('Price : $harga')
+                  ],
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
