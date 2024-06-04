@@ -20,10 +20,8 @@ class _TablekategoriState extends State<Tablekategori> {
   final dbHelper = DBHelper();
   final _formKeyKategori = GlobalKey<FormState>();
   final _namamapel = TextEditingController();
-  final _kelas = TextEditingController();
   final _inputgambar = TextEditingController();
-  //kelas selection
-  String? _selectkelas;
+
   //gambar
   File? _gambar;
   Future _pilihgambar() async {
@@ -57,11 +55,9 @@ class _TablekategoriState extends State<Tablekategori> {
       final existingKategori =
           _kategori.firstWhere((element) => element['id_kategori'] == id);
       _namamapel.text = existingKategori['nama_mapel'];
-      _kelas.text = existingKategori['kelas'];
       _inputgambar.text = existingKategori['gambar'];
     } else {
       _namamapel.clear();
-      _kelas.clear();
       _inputgambar.clear();
     }
 
@@ -83,7 +79,7 @@ class _TablekategoriState extends State<Tablekategori> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   const Text(
-                    'Add New Category',
+                    'Edit New Category',
                     style: TextStyle(
                       color: Color(0xff404080),
                       fontSize: 20,
@@ -97,35 +93,6 @@ class _TablekategoriState extends State<Tablekategori> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Require Subject Name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  DropdownButtonFormField<String>(
-                    dropdownColor: Color(0xffFFFFFF),
-                    value: _selectkelas,
-                    items: ['X', 'XI', 'XII']
-                        .map((kelas) {
-                          return DropdownMenuItem<String>(
-                            value: kelas,
-                            child: Text(kelas),
-                          );
-                        })
-                        .toSet()
-                        .toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _kelas.text = newValue!;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Grade',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Require Grade';
                       }
                       return null;
                     },
@@ -200,7 +167,8 @@ class _TablekategoriState extends State<Tablekategori> {
     // Cek apakah ada kategori dengan kelas yang sama kecuali untuk entri yang sedang diperbarui
     _kategori.firstWhere(
       (kategori) =>
-          kategori['kelas'] == _kelas.text && kategori['id_kategori'] != id,
+          kategori['nama_mapel'] == _namamapel.text &&
+          kategori['id_kategori'] != id,
       orElse: () => {'kategori_mapel': -1},
     );
 
@@ -212,14 +180,12 @@ class _TablekategoriState extends State<Tablekategori> {
       await dbHelper.updateKategoriMapel({
         'id_kategori': id,
         'nama_mapel': _namamapel.text,
-        'kelas': _kelas.text,
         'gambar': base64Image,
       });
     } else {
       await dbHelper.updateKategoriMapel({
         'id_kategori': id,
         'nama_mapel': _namamapel.text,
-        'kelas': _kelas.text,
       });
     }
 
@@ -322,19 +288,6 @@ class _TablekategoriState extends State<Tablekategori> {
                               )
                             : const Icon(Icons.person, size: 50),
                         title: Text(kategori['nama_mapel']),
-                        subtitle: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  kategori['kelas'],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
                         trailing: SizedBox(
                           width: 100,
                           child: Row(

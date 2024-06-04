@@ -27,7 +27,6 @@ class _LessonPageState extends State<LessonPage> {
   final _kategorikelasController = TextEditingController();
   final _hargaController = TextEditingController();
   final _namamapel = TextEditingController();
-  final _kelas = TextEditingController();
   final _inputgambar = TextEditingController();
   // final _namaGuru = TextEditingController();
   //pilihan kategorinya
@@ -152,33 +151,31 @@ class _LessonPageState extends State<LessonPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  _kategori == null //jadi kalo gaada kategorinya dia gak muncul
-                      ? CircularProgressIndicator() //berhubungan sama yg tadi itu, jadi fungsinya ini buat loading screen untuk jalanin mencari data dari tabel kategori
-                      : DropdownButtonFormField<String>(
-                          dropdownColor: Color(0xffFFFFFF),
-                          value: _selectedkelas,
-                          items: ['X', 'XI', 'XII'].map((kelas) {
-                            return DropdownMenuItem<String>(
-                              value: kelas,
-                              child: Text(kelas),
-                            );
-                          }).toList(),
-                          onChanged: (newValue) {
-                            setState(() {
-                              _selectedkelas = newValue!;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Choose Grade',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Require Grade';
-                            }
-                            return null;
-                          },
-                        ),
+                  DropdownButtonFormField<String>(
+                    dropdownColor: Color(0xffFFFFFF),
+                    value: _selectedkelas,
+                    items: ['X', 'XI', 'XII'].map((kelas) {
+                      return DropdownMenuItem<String>(
+                        value: kelas,
+                        child: Text(kelas),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedkelas = newValue!;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Choose Grade',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Require Grade';
+                      }
+                      return null;
+                    },
+                  ),
                   SizedBox(
                     height: 10,
                   ),
@@ -266,11 +263,9 @@ class _LessonPageState extends State<LessonPage> {
       final existingKategori =
           _kategori.firstWhere((element) => element['id_kategori'] == id);
       _namamapel.text = existingKategori['nama_mapel'];
-      _kelas.text = existingKategori['kelas'];
       _inputgambar.text = existingKategori['gambar'];
     } else {
       _namamapel.clear();
-      _kelas.clear();
       _inputgambar.clear();
     }
 
@@ -306,35 +301,6 @@ class _LessonPageState extends State<LessonPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Require Subject Name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  DropdownButtonFormField<String>(
-                    dropdownColor: Color(0xffFFFFFF),
-                    value: _kelas.text.isNotEmpty ? _kelas.text : null,
-                    items: ['X', 'XI', 'XII']
-                        .map((kelas) {
-                          return DropdownMenuItem<String>(
-                            value: kelas,
-                            child: Text(kelas),
-                          );
-                        })
-                        .toSet()
-                        .toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _kelas.text = newValue!;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Grade',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Require Grade';
                       }
                       return null;
                     },
@@ -385,9 +351,7 @@ class _LessonPageState extends State<LessonPage> {
                         if (_formKeyCategory.currentState!.validate()) {
                           if (id == null) {
                             _addKategoriMapel();
-                          } else {
-                            _updateKategoriMapel(id);
-                          }
+                          } 
                           Navigator.of(context).pop();
                         }
                       },
@@ -430,7 +394,6 @@ class _LessonPageState extends State<LessonPage> {
     );
     //mapel kelas dan gambar berdasarkan dari tabel nya kategori
     final selectedMapel = selectedKategori['nama_mapel'];
-    final selectedKelas = selectedKategori['kelas'];
     final selectedGambar = selectedKategori['gambar'];
 
     // Dapatkan nama guru dari tabel guru
@@ -444,7 +407,7 @@ class _LessonPageState extends State<LessonPage> {
     // Insert data ke database
     await dbHelper.insertMapel({
       'mapel': selectedMapel,
-      'kelas': selectedKelas,
+      'kelas': _selectedkelas,
       'nama_guru': namaGuru,
       'harga': _hargaController.text,
       'gambar': selectedGambar,
@@ -462,7 +425,6 @@ class _LessonPageState extends State<LessonPage> {
     );
 
     final selectedMapel = selectedKategori['nama_mapel'];
-    final selectedKelas = selectedKategori['kelas'];
     final selectedGambar = selectedKategori['gambar'];
 
     // Dapatkan nama guru dari tabel guru
@@ -476,7 +438,7 @@ class _LessonPageState extends State<LessonPage> {
     await dbHelper.updateMapel({
       'id': id,
       'mapel': selectedMapel,
-      'kelas': selectedKelas,
+      'kelas': _kategorikelasController.text,
       'nama_guru': namaGuru,
       'harga': _hargaController.text,
       'gambar': selectedGambar,
@@ -485,20 +447,17 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _addKategoriMapel() async {
-    // Cek apakah ada kategori dengan kelas yang sama
+    // Cek apakah ada kategori yang sama
     final existingKategori = _kategori.firstWhere(
-      (kategori) => kategori['kelas'] == _kelas.text,
+      (kategori) => kategori['nama_mapel'] == _namamapel.text,
       orElse: () => {'kategori_mapel': -1},
     );
 
     // Jika kategori dengan kelas yang sama ditemukan
     if (existingKategori != {'kategori_mapel': -1}) {
       // Cek apakah nama mapel sama dengan yang sudah ada
-      final sameMapelExists = _kategori.any(
-        (kategori) =>
-            kategori['nama_mapel'] == _namamapel.text &&
-            kategori['kelas'] == _kelas.text,
-      );
+      final sameMapelExists = _kategori
+          .any((kategori) => kategori['nama_mapel'] == _namamapel.text);
 
       // Jika nama mapel juga sama, tampilkan Snackbar
       if (sameMapelExists) {
@@ -520,68 +479,17 @@ class _LessonPageState extends State<LessonPage> {
 
       await dbHelper.insertKategoriMapel({
         'nama_mapel': _namamapel.text,
-        'kelas': _kelas.text,
         'gambar': base64Image,
       });
     } else {
       await dbHelper.insertKategoriMapel({
         'nama_mapel': _namamapel.text,
-        'kelas': _kelas.text,
       });
     }
 
     _refreshKategori();
   }
 
-  Future<void> _updateKategoriMapel(int id) async {
-    // Cek apakah ada kategori dengan kelas yang sama kecuali untuk data yang sedang diperbarui
-    final existingKategori = _kategori.firstWhere(
-      (kategori) =>
-          kategori['kelas'] == _kelas.text && kategori['id_kategori'] != id,
-      orElse: () => {'kategori_mapel': -1},
-    );
-
-    // Jika kategori dengan kelas yang sama ditemukan
-    if (existingKategori != null) {
-      // Cek apakah nama mapel sama dengan yang sudah ada
-      final sameMapelExists = _kategori.any(
-        (kategori) =>
-            kategori['nama_mapel'] == _namamapel.text &&
-            kategori['kelas'] == _kelas.text,
-      );
-
-      // Jika nama mapel juga sama, tampilkan Snackbar
-      if (sameMapelExists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Category already exists in the database'),
-          ),
-        );
-        return; // Hentikan proses pembaruan data
-      }
-    }
-
-    // Jika tidak ada kategori dengan kelas yang sama atau nama mapel berbeda, lakukan pembaruan data
-    if (_gambar != null) {
-      List<int> imageBytes = await _gambar!.readAsBytes();
-      String base64Image = base64Encode(imageBytes);
-
-      await dbHelper.updateKategoriMapel({
-        'id_kategori': id,
-        'nama_mapel': _namamapel.text,
-        'kelas': _kelas.text,
-        'gambar': base64Image,
-      });
-    } else {
-      await dbHelper.updateKategoriMapel({
-        'id_kategori': id,
-        'nama_mapel': _namamapel.text,
-        'kelas': _kelas.text,
-      });
-    }
-
-    _refreshKategori();
-  }
 
   void _deleteMapel(int id) async {
     await dbHelper.deleteMapel(id);

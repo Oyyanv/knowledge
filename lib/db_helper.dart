@@ -26,7 +26,6 @@ class DBHelper {
         await db.execute("CREATE TABLE kategori_mapel("
             "id_kategori INTEGER PRIMARY KEY AUTOINCREMENT, "
             "nama_mapel TEXT, "
-            "kelas TEXT, "
             "gambar TEXT)");
         await db.execute("CREATE TABLE mapel("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -74,7 +73,6 @@ class DBHelper {
           await db.execute("CREATE TABLE kategori_mapel("
               "id_kategori INTEGER PRIMARY KEY AUTOINCREMENT, "
               "nama_mapel TEXT, "
-              "kelas TEXT, "
               "gambar TEXT)");
           await db.execute("CREATE TABLE mapel("
               "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -93,7 +91,6 @@ class DBHelper {
           await db.execute("CREATE TABLE kategori_mapel("
               "id_kategori INTEGER PRIMARY KEY AUTOINCREMENT, "
               "nama_mapel TEXT, "
-              "kelas TEXT, "
               "gambar TEXT)");
         }
         if (oldVersion < 5) {
