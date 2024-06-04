@@ -277,8 +277,9 @@ class _TablekategoriState extends State<Tablekategori> {
                     return Card(
                       color: const Color(0xffF7F7F7),
                       elevation: 6,
-                      margin: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(15),
                       child: ListTile(
+                        contentPadding: EdgeInsets.all(10),
                         leading: kategori['gambar'] != null
                             ? Image.memory(
                                 base64Decode(kategori['gambar']),

@@ -32,6 +32,8 @@ class _LessonPageState extends State<LessonPage> {
   //pilihan kategorinya
   String? _selectedmapel;
   String? _selectedkelas;
+  // String? _selectedkelasKategori;
+  String? _selectedmapelKategori;
   String? _selectedguru;
   //array data table mapel,guru,kategori
   List<Map<String, dynamic>> _mapel = [];
@@ -351,7 +353,7 @@ class _LessonPageState extends State<LessonPage> {
                         if (_formKeyCategory.currentState!.validate()) {
                           if (id == null) {
                             _addKategoriMapel();
-                          } 
+                          }
                           Navigator.of(context).pop();
                         }
                       },
@@ -438,7 +440,7 @@ class _LessonPageState extends State<LessonPage> {
     await dbHelper.updateMapel({
       'id': id,
       'mapel': selectedMapel,
-      'kelas': _kategorikelasController.text,
+      'kelas': _selectedkelas,
       'nama_guru': namaGuru,
       'harga': _hargaController.text,
       'gambar': selectedGambar,
@@ -490,7 +492,6 @@ class _LessonPageState extends State<LessonPage> {
     _refreshKategori();
   }
 
-
   void _deleteMapel(int id) async {
     await dbHelper.deleteMapel(id);
     ScaffoldMessenger.of(context)
@@ -509,7 +510,8 @@ class _LessonPageState extends State<LessonPage> {
   List<Map<String, dynamic>> _filteredMapel() {
     //nyari di kategori
     final selectedCategory = _kategori.firstWhere(
-      (kategori) => kategori['id_kategori'].toString() == _selectedmapel,
+      (kategori) =>
+          kategori['id_kategori'].toString() == _selectedmapelKategori,
       orElse: () => {'nama_mapel': ''},
     );
 
@@ -518,6 +520,14 @@ class _LessonPageState extends State<LessonPage> {
       return mapel['mapel'] == selectedCategory['nama_mapel'];
     }).toList();
   }
+
+//   List<Map<String, dynamic>> _filteredkelas() {
+//   if (_selectedkelasKategori == null) {
+//     return _mapel;
+//   }
+//   return _mapel.where((mapel) => mapel['kelas'] == _selectedkelasKategori).toList();
+// }
+
 
   @override
   Widget build(BuildContext context) {
@@ -546,8 +556,8 @@ class _LessonPageState extends State<LessonPage> {
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          _selectedmapel = null;
-                          _selectedkelas = null;
+                          _selectedmapelKategori = null;
+                          // _selectedkelasKategori = null;
                         });
                       },
                       child: Icon(
@@ -587,7 +597,7 @@ class _LessonPageState extends State<LessonPage> {
                       EdgeInsets.symmetric(horizontal: 15), // jarak didalam
                   child: DropdownButton<String>(
                     dropdownColor: Color(0xffFFFFFF),
-                    value: _selectedmapel,
+                    value: _selectedmapelKategori,
                     items: _kategori.map((kategori) {
                       return DropdownMenuItem<String>(
                         value: kategori['id_kategori'].toString(),
@@ -597,7 +607,7 @@ class _LessonPageState extends State<LessonPage> {
                     // Panggil fungsi tersebut setiap kali terjadi perubahan pada pilihan kategori
                     onChanged: (newValue) {
                       setState(() {
-                        _selectedmapel = newValue!;
+                        _selectedmapelKategori = newValue!;
                         _filteredMapel();
                         _refreshMapel();
                       });
@@ -608,41 +618,41 @@ class _LessonPageState extends State<LessonPage> {
                     underline: Container(), // Hilangkan garis bawah dropdown
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius:
-                        BorderRadius.circular(10.0), // Atur border radius
-                  ),
-                  margin: EdgeInsets.only(
-                    left: 15,
-                    right: 15,
-                    bottom: 10,
-                    top: 10,
-                  ), // jarak halaman
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: DropdownButton<String>(
-                    dropdownColor: Color(0xffFFFFFF),
-                    value: _selectedkelas,
-                    items: ['X', 'XI', 'XII'].map((kelas) {
-                      return DropdownMenuItem<String>(
-                        value: kelas,
-                        child: Text(kelas),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedkelas = newValue!;
-                        _refreshMapel();
-                        _filteredMapel();
-                      });
-                    },
-                    hint: Text('Choose Class'),
-                    isExpanded:
-                        true, //dropdown menampilkan pilihan secara penuh
-                    underline: Container(), // Hilangkan garis bawah dropdown
-                  ),
-                ),
+                // Container(
+                //   decoration: BoxDecoration(
+                //     border: Border.all(color: Colors.grey),
+                //     borderRadius:
+                //         BorderRadius.circular(10.0), // Atur border radius
+                //   ),
+                //   margin: EdgeInsets.only(
+                //     left: 15,
+                //     right: 15,
+                //     bottom: 10,
+                //     top: 10,
+                //   ), // jarak halaman
+                //   padding: EdgeInsets.symmetric(horizontal: 15),
+                //   child: DropdownButton<String>(
+                //     dropdownColor: Color(0xffFFFFFF),
+                //     value: _selectedkelasKategori,
+                //     items: ['X', 'XI', 'XII'].map((kelas) {
+                //       return DropdownMenuItem<String>(
+                //         value: kelas,
+                //         child: Text(kelas),
+                //       );
+                //     }).toList(),
+                //     onChanged: (newValue) {
+                //       setState(() {
+                //         _selectedkelasKategori = newValue!;
+                //         _refreshMapel();
+                //         _filteredMapel();
+                //       });
+                //     },
+                //     hint: Text('Choose Grade'),
+                //     isExpanded:
+                //         true, //dropdown menampilkan pilihan secara penuh
+                //     underline: Container(), // Hilangkan garis bawah dropdown
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -673,7 +683,7 @@ class _LessonPageState extends State<LessonPage> {
             ],
           ),
           Visibility(
-            visible: _selectedmapel != null,
+            visible: _selectedmapelKategori != null,
             replacement: Expanded(
               child: ListView(
                 children: _mapel.map(
