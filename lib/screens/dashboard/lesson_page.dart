@@ -30,11 +30,11 @@ class _LessonPageState extends State<LessonPage> {
   final _kelas = TextEditingController();
   final _inputgambar = TextEditingController();
   // final _namaGuru = TextEditingController();
-  //kategori
+  //pilihan kategorinya
   String? _selectedmapel;
   String? _selectedkelas;
   String? _selectedguru;
-  //array data
+  //array data table mapel,guru,kategori
   List<Map<String, dynamic>> _mapel = [];
   List<Map<String, dynamic>> _kategori = [];
   List<Map<String, dynamic>> _guru = [];
@@ -58,6 +58,7 @@ class _LessonPageState extends State<LessonPage> {
     _refreshGuru();
   }
 
+  //ini untuk manggil data dari table di database
   void _refreshMapel() async {
     final data = await dbHelper.queryAllMapel();
     setState(() {
@@ -80,6 +81,7 @@ class _LessonPageState extends State<LessonPage> {
     });
   }
 
+  //form tambah mapel
   void _showForm(int? id) {
     if (id != null) {
       final existingMapel = _mapel.firstWhere((element) => element['id'] == id);
@@ -258,6 +260,7 @@ class _LessonPageState extends State<LessonPage> {
     );
   }
 
+  //form tambah kategori
   void _showFormKategori(int? id) {
     if (id != null) {
       final existingKategori =
@@ -399,6 +402,7 @@ class _LessonPageState extends State<LessonPage> {
     );
   }
 
+  //proses tambah mapel
   Future<void> _addMapel() async {
     // Periksa apakah nilai yang dipilih dari dropdown tidak kosong
     if (_selectedmapel == null ||
@@ -419,12 +423,12 @@ class _LessonPageState extends State<LessonPage> {
       return;
     }
 
-    // Dapatkan data subjek dan kelas dari tabel kategori
+    // Dapatkan data mapel dan kelas dari tabel kategori
     final selectedKategori = _kategori.firstWhere(
       (kategori) => kategori['id_kategori'].toString() == _selectedmapel,
-      orElse: () => {'id_kategori': -1},
+      orElse: () => {'id_kategori': -1}, //id_kategori : -1 = null sama aja
     );
-
+    //mapel kelas dan gambar berdasarkan dari tabel nya kategori
     final selectedMapel = selectedKategori['nama_mapel'];
     final selectedKelas = selectedKategori['kelas'];
     final selectedGambar = selectedKategori['gambar'];
@@ -530,7 +534,7 @@ class _LessonPageState extends State<LessonPage> {
   }
 
   Future<void> _updateKategoriMapel(int id) async {
-    // Cek apakah ada kategori dengan kelas yang sama kecuali untuk entri yang sedang diperbarui
+    // Cek apakah ada kategori dengan kelas yang sama kecuali untuk data yang sedang diperbarui
     final existingKategori = _kategori.firstWhere(
       (kategori) =>
           kategori['kelas'] == _kelas.text && kategori['id_kategori'] != id,
