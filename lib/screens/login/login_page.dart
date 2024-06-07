@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:knowledge/screens/home.dart';
 import 'package:knowledge/screens/intro/introduction.dart';
+import 'package:knowledge/screens/login/pickregister.dart';
+import 'package:page_transition/page_transition.dart';
+// import 'package:knowledge/screens/login/register.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -254,12 +257,12 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
                           InkWell(
                             onTap: () {
                               if (_loginKey.currentState!.validate()) {
-                                Navigator.pushReplacement(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
@@ -289,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
@@ -310,6 +313,34 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
+                    ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Dont have an account?',
+                          style: TextStyle(color: Colors.grey[400]),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                  child: PilihRegister(),
+                                  type: PageTransitionType.fade),
+                            );
+                          },
+                          child: Text(
+                            'SIGN UP',
+                            style: TextStyle(
+                              color: Color(0xff404080),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

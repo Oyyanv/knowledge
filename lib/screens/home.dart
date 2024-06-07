@@ -139,6 +139,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        //ini kalo navigator.push back buttonnya di ilangin
+        automaticallyImplyLeading: false,
         title: Container(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
